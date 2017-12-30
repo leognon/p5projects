@@ -1,40 +1,52 @@
+let limits = { //For generating genes and limiting cars
+  minSpeed: 3,
+  maxSpeed: 8,
+  minAcc: 0.2,
+  maxAcc: 0.4,
+  minW: 15,
+  maxW: 30,
+  minH: 35,
+  maxH: 70
+}
+
 let car;
 let lifetime = 250;
 let time = 0;
 
 function setup() {
+  // randomSeed(99);
+
   createCanvas(windowWidth, windowHeight);
-  car = new Car(width / 2, height / 2, 20, 50, 5, 0.4);
+  car = new Car();
   time = 0;
 }
 
 function draw() {
   background(220);
 
-  car.move();
+  run();
+}
+
+function run() {
+  if (time < lifetime) car.move();
   car.show();
 
-
-  time++;
+  if (time < lifetime) {
+    time++;
+  }
 }
 
 class Car {
-  constructor(x, y, w, h, maxSpeed, accRate, genes) {
-    this.w = w;
-    this.h = h;
+  constructor(x = width / 2, y = height / 2, genes = randGenes()) {
     this.pos = createVector(x, y);
     this.vel = createVector(0, 0);
 
-    // this.genes = new DNA(maxSpeed, accRate, w, h);
-    this.genes = [];
-    for (let i = 0; i < lifetime; i++) {
-      this.genes.push(p5.Vector.random2D().setMag(accRate));
-    }
+    this.genes = genes;
   }
 
   move() {
-    this.vel.add(this.genes[time]);
-    this.vel.limit(this.maxSpeed);
+    this.vel.add(this.genes.accs[time]);
+    this.vel.limit(this.genes.maxSpeed);
     this.pos.add(this.vel);
   }
 
@@ -44,8 +56,21 @@ class Car {
     rotate(this.vel.heading() + HALF_PI);
     fill(50);
     noStroke();
-    rect(-this.w / 2, -this.h / 2, this.w, this.h);
-
+    rect(-this.genes.width / 2, -this.genes.height / 2, this.genes.width, this.genes.height);
     pop();
   }
+}
+
+function randGenes() {
+  genes = {
+    accs: [],
+    maxSpeed: random(limits.minSpeed, limits.maxSpeed),
+    accRate: random(limits.minAcc, limits.maxAcc),
+    width: random(limits.minW, limits.maxW),
+    height: random(limits.minH, limits.maxH)
+  };
+  for (let i = 0; i < lifetime; i++) {
+    genes.accs.push((p5.Vector.random2D().setMag(genes.accRate)));
+  }
+  return genes;
 }
