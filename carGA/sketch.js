@@ -9,16 +9,19 @@ let limits = { //For generating genes and limiting cars
   maxH: 70
 }
 
-let car;
+let population = [];
+let populationSize = 50;
 let lifetime = 250;
-let time = 0;
+let time;
 
 function setup() {
+  createCanvas(windowWidth, windowHeight);
+  time = 0;
   // randomSeed(99);
 
-  createCanvas(windowWidth, windowHeight);
-  car = new Car();
-  time = 0;
+  for (let i = 0; i < populationSize; i++) { //Create the initial population
+    population.push(new Car());
+  }
 }
 
 function draw() {
@@ -28,8 +31,10 @@ function draw() {
 }
 
 function run() {
-  if (time < lifetime) car.move();
-  car.show();
+  for (let car of population) {
+    if (time < lifetime) car.move();
+    car.show();
+  }
 
   if (time < lifetime) {
     time++;
