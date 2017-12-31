@@ -23,7 +23,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   time = 0;
 
-  startX = width / 2;
+  startX = 100;
   startY = height / 2;
   // randomSeed(99);
 
@@ -38,40 +38,40 @@ function draw() {
   if (time < lifetime) {
     run(); //Run the simulation
   } else {
-    nextGen = [];
-    matingPool = [];
+    nextGen = []; //The next generation
+    matingPool = []; //The mating pool to breed the next gen
 
     for (let i = 0; i < cars.length; i++) {
       let car = cars[i];
       let fitness = car.pos.x; //Better to go to the right
       //Evalute the fitness
 
-      let amt = round(fitness / 30);
+      let amt = round(fitness / 10); //How many of that cars genes will get passed on
       for (let j = 0; j < amt; j++) {
-        matingPool.push(i); //Create mating pool of indeces
+        matingPool.push(i); //Create mating pool of indeces, with better cars having more places in array
       }
     }
 
     for (let i = 0; i < cars.length; i++) {
-      let parentA = matingPool[floor(random(matingPool.length))];
-      let parentB = matingPool[floor(random(matingPool.length))];
+      let parentA = matingPool[floor(random(matingPool.length))]; //Pick the index of the first parent
+      let parentB = matingPool[floor(random(matingPool.length))]; //Pick the index of the second parent
       let attempt = 0;
-      while (parentA == parentB) {
+      while (parentA == parentB) { //Make sure both parents are different
         parentB = matingPool[floor(random(matingPool.length))];
 
         attempt++;
         if (attempt > 1000) return;
       }
 
-      let childGenes = crossover(cars[parentA], cars[parentB]); //Crossover to create new cars
+      let childGenes = crossover(cars[parentA], cars[parentB]); //Crossover to create new genes from parents
 
       //Randomly mutate genes of cars
 
-      nextGen.push(new Car(startX, startY, childGenes));
+      nextGen.push(new Car(startX, startY, childGenes)); //Add the child car to the next generation
     }
 
-    cars = nextGen;
-    time = 0;
+    cars = nextGen; //The next Gen become the current Gen
+    time = 0; //Restart the time
   }
 }
 
@@ -84,71 +84,7 @@ function run() {
   time++;
 }
 
-class Car {
-  constructor(x = startX, y = startY, genes = randGenes()) {
-    this.pos = createVector(x, y);
-    this.vel = createVector(0, 0);
-
-    this.genes = genes;
-  }
-
-  move() {
-    this.vel.add(this.genes.accs[time]);
-    this.vel.limit(this.genes.maxSpeed);
-    this.pos.add(this.vel);
-  }
-
-  show() {
-    push();
-    translate(this.pos.x, this.pos.y);
-    rotate(this.vel.heading() + HALF_PI);
-    fill(50);
-    noStroke();
-    rect(-this.genes.width / 2, -this.genes.height / 2, this.genes.width, this.genes.height);
-    pop();
-  }
-}
-
-function randGenes() {
-  genes = {
-    accs: [],
-    maxSpeed: random(limits.minSpeed, limits.maxSpeed),
-    accRate: random(limits.minAcc, limits.maxAcc),
-    width: random(limits.minW, limits.maxW),
-    height: random(limits.minH, limits.maxH)
-  };
-  for (let i = 0; i < lifetime; i++) {
-    genes.accs.push((p5.Vector.random2D().mult(genes.accRate)));
-  }
-  return genes;
-}
-
-function crossover(a, b) {
-  genes = {
-    accs: [],
-    maxSpeed: pickRand(a.genes.maxSpeed, b.genes.maxSpeed),
-    accRate: pickRand(a.genes.accRate, b.genes.accRate),
-    width: pickRand(a.genes.width, b.genes.width),
-    height: pickRand(a.genes.height, b.genes.height)
-  };
-
-  if (random(1) < mutationRate) genes.maxSpeed = random(limits.minSpeed, limits.maxSpeed);
-  if (random(1) < mutationRate) genes.AccRate = random(limits.minAcc, limits.maxAcc);
-  if (random(1) < mutationRate) genes.width = random(limits.minW, limits.maxW);
-  if (random(1) < mutationRate) genes.height = random(limits.minH, limits.maxH);
-
-  for (let i = 0; i < lifetime; i++) {
-    if (random(1) < mutationRate) {
-      genes.accs.push((p5.Vector.random2D().mult(genes.accRate)));
-    } else {
-      genes.accs.push(pickRand(a.genes.accs[i], b.genes.accs[i]));
-    }
-  }
-
-  return genes;
-}
-
-function pickRand(a, b) {
+function pickRand(a, b) { //50/50 chance to return a or b
   if (random(1) < 0.5) return a;
   else return b;
 }
