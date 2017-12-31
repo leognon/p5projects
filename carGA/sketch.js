@@ -9,40 +9,76 @@ let limits = { //For generating genes and limiting cars
   maxH: 70
 }
 
-let population = [];
+let cars = [];
+let matingPool = [];
 let populationSize = 50;
 let lifetime = 250;
 let time;
+let startX;
+let startY;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   time = 0;
+
+  startX = width / 2;
+  startY = height / 2;
   // randomSeed(99);
 
   for (let i = 0; i < populationSize; i++) { //Create the initial population
-    population.push(new Car());
+    cars.push(new Car());
   }
 }
 
 function draw() {
   background(220);
 
-  run();
+  if (time < lifetime) {
+    run(); //Run the simulation
+  } else {
+    matingPool = [];
+
+    for (let i = 0; i < cars.length; i++) {
+      let car = cars[i];
+      let fitness = car.pos.x; //Better to go to the right
+      //Evalute the fitness
+
+      let amt = round(fitness / 30);
+      for (let j = 0; j < amt; j++) {
+        matingPool.push(i); //Create mating pool of indeces
+      }
+    }
+
+    for (let i = 0; i < cars.length; i++) {
+      let parentA = floor(random(matingPool.length));
+      let parentB = floor(random(matingPool.length));
+      let attempt = 0;
+      while (parentA == parentB) {
+        parentB = floor(random(matingPool.length));
+
+        attempt++;
+        if (attempt > 1000) return;
+      }
+
+      //Crossover to create new cars
+    }
+
+
+    //Randomly mutate genes of cars
+  }
 }
 
 function run() {
-  for (let car of population) {
-    if (time < lifetime) car.move();
+  for (let car of cars) {
+    car.move();
     car.show();
   }
 
-  if (time < lifetime) {
-    time++;
-  }
+  time++;
 }
 
 class Car {
-  constructor(x = width / 2, y = height / 2, genes = randGenes()) {
+  constructor(x = startX, y = startY, genes = randGenes()) {
     this.pos = createVector(x, y);
     this.vel = createVector(0, 0);
 
