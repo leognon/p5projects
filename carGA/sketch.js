@@ -11,11 +11,13 @@ let limits = { //For generating genes and limiting cars
 
 let cars = [];
 let matingPool = [];
-let populationSize = 50;
-let lifetime = 250;
+let nextGen = [];
+let populationSize = 150;
+let lifetime = 150;
 let time;
 let startX;
 let startY;
+let mutationRate = 0.03;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -36,6 +38,7 @@ function draw() {
   if (time < lifetime) {
     run(); //Run the simulation
   } else {
+    nextGen = [];
     matingPool = [];
 
     for (let i = 0; i < cars.length; i++) {
@@ -50,21 +53,25 @@ function draw() {
     }
 
     for (let i = 0; i < cars.length; i++) {
-      let parentA = floor(random(matingPool.length));
-      let parentB = floor(random(matingPool.length));
+      let parentA = matingPool[floor(random(matingPool.length))];
+      let parentB = matingPool[floor(random(matingPool.length))];
       let attempt = 0;
       while (parentA == parentB) {
-        parentB = floor(random(matingPool.length));
+        parentB = matingPool[floor(random(matingPool.length))];
 
         attempt++;
         if (attempt > 1000) return;
       }
 
-      //Crossover to create new cars
+      let childGenes = crossover(cars[parentA], cars[parentB]); //Crossover to create new cars
+
+      //Randomly mutate genes of cars
+
+      nextGen.push(new Car(startX, startY, childGenes));
     }
 
-
-    //Randomly mutate genes of cars
+    cars = nextGen;
+    time = 0;
   }
 }
 
@@ -111,7 +118,37 @@ function randGenes() {
     height: random(limits.minH, limits.maxH)
   };
   for (let i = 0; i < lifetime; i++) {
-    genes.accs.push((p5.Vector.random2D().setMag(genes.accRate)));
+    genes.accs.push((p5.Vector.random2D().mult(genes.accRate)));
   }
   return genes;
+}
+
+function crossover(a, b) {
+  genes = {
+    accs: [],
+    maxSpeed: pickRand(a.genes.maxSpeed, b.genes.maxSpeed),
+    accRate: pickRand(a.genes.accRate, b.genes.accRate),
+    width: pickRand(a.genes.width, b.genes.width),
+    height: pickRand(a.genes.height, b.genes.height)
+  };
+
+  if (random(1) < mutationRate) genes.maxSpeed = random(limits.minSpeed, limits.maxSpeed);
+  if (random(1) < mutationRate) genes.AccRate = random(limits.minAcc, limits.maxAcc);
+  if (random(1) < mutationRate) genes.width = random(limits.minW, limits.maxW);
+  if (random(1) < mutationRate) genes.height = random(limits.minH, limits.maxH);
+
+  for (let i = 0; i < lifetime; i++) {
+    if (random(1) < mutationRate) {
+      genes.accs.push((p5.Vector.random2D().mult(genes.accRate)));
+    } else {
+      genes.accs.push(pickRand(a.genes.accs[i], b.genes.accs[i]));
+    }
+  }
+
+  return genes;
+}
+
+function pickRand(a, b) {
+  if (random(1) < 0.5) return a;
+  else return b;
 }
