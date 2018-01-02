@@ -13,13 +13,13 @@ let cars = [];
 let deadCars = [];
 let matingPool = [];
 let nextGen = [];
-let populationSize = 150;
+let populationSize = 400;
 let lifetime = 350;
 let time;
 let startX;
 let startY;
 let mutationRate = 0.005;
-let showDebug = true;
+let showDebug = false;
 let obstacles = [];
 
 let drawingObstacle = {
@@ -45,9 +45,9 @@ function setup() {
 }
 
 function draw() {
-  background(220);
 
   if (time < lifetime && cars.length > 0) {
+    background(220);
     run(); //Run the simulation
   } else {
     nextGen = []; //The next generation
@@ -102,7 +102,7 @@ function run() {
     rect(drawingObstacle.x, drawingObstacle.y, mouseX - drawingObstacle.x, mouseY - drawingObstacle.y);
   }
 
-  for (car of deadCars) {
+  for (let car of deadCars) {
     car.show();
   }
 
@@ -110,7 +110,7 @@ function run() {
     let car = cars[i];
     if (!car.dead) {
       car.move();
-      car.hit(); //TODO: Fix if all cars die
+      car.hit();
     }
     car.show();
     if (car.dead) {
@@ -119,7 +119,7 @@ function run() {
     }
   }
 
-  for (obstacle of obstacles) {
+  for (let obstacle of obstacles) {
     obstacle.show();
   }
 
@@ -127,21 +127,31 @@ function run() {
 }
 
 function mousePressed() {
-  if (drawingObstacle.drawing == false) {
-    drawingObstacle.x = mouseX;
-    drawingObstacle.y = mouseY;
-    drawingObstacle.drawing = true;
-  } else {
-    let width = mouseX - drawingObstacle.x;
-    let height = mouseY - drawingObstacle.y;
+  if (mouseButton == LEFT) {
+    if (drawingObstacle.drawing == false) {
+      drawingObstacle.x = mouseX;
+      drawingObstacle.y = mouseY;
+      drawingObstacle.drawing = true;
+    } else {
+      let width = mouseX - drawingObstacle.x;
+      let height = mouseY - drawingObstacle.y;
 
-    if (width < 0) drawingObstacle.x += width;
-    if (height < 0) drawingObstacle.y += height;
-    height = abs(height);
-    width = abs(width);
+      if (width < 0) drawingObstacle.x += width;
+      if (height < 0) drawingObstacle.y += height;
+      height = abs(height);
+      width = abs(width);
 
-    obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
-    drawingObstacle.drawing = false;
+      obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
+      drawingObstacle.drawing = false;
+    }
+  } else if (mouseButton == RIGHT) {
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      let obstacle = obstacles[i];
+      if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {
+        obstacles.splice(i, 1);
+        return;
+      }
+    }
   }
 }
 
