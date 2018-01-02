@@ -55,8 +55,6 @@ class Car {
     fill(50); //Greyish color
     noStroke();
     rect(-this.genes.width / 2, -this.genes.height / 2, this.genes.width, this.genes.height); //Draw rect
-
-    ellipse(0, 0, 5, 5);
     pop();
   }
 }
