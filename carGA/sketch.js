@@ -10,14 +10,18 @@ let limits = { //For generating genes and limiting cars
 }
 
 let cars = [];
+let deadCars = [];
 let matingPool = [];
 let nextGen = [];
-let populationSize = 150;
-let lifetime = 150;
+let populationSize = 50;
+let lifetime = 350;
 let time;
 let startX;
 let startY;
-let mutationRate = 0.03;
+let mutationRate = 0.005;
+let showDebug = false;
+
+let obstacle;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -30,6 +34,8 @@ function setup() {
   for (let i = 0; i < populationSize; i++) { //Create the initial population
     cars.push(new Car());
   }
+
+  obstacle = new Obstacle(325, 325, 100, 200);
 }
 
 function draw() {
@@ -43,16 +49,18 @@ function draw() {
 
     for (let i = 0; i < cars.length; i++) {
       let car = cars[i];
+      if (car.dead == true) return;
+
       let fitness = car.pos.x; //Better to go to the right
       //Evalute the fitness
 
-      let amt = round(fitness / 10); //How many of that cars genes will get passed on
+      let amt = round(fitness / 2); //How many of that cars genes will get passed on
       for (let j = 0; j < amt; j++) {
         matingPool.push(i); //Create mating pool of indeces, with better cars having more places in array
       }
     }
 
-    for (let i = 0; i < cars.length; i++) {
+    for (let i = 0; i < populationSize; i++) {
       let parentA = matingPool[floor(random(matingPool.length))]; //Pick the index of the first parent
       let parentB = matingPool[floor(random(matingPool.length))]; //Pick the index of the second parent
       let attempt = 0;
@@ -71,15 +79,29 @@ function draw() {
     }
 
     cars = nextGen; //The next Gen become the current Gen
+    deadCars = [];
     time = 0; //Restart the time
   }
 }
 
 function run() {
-  for (let car of cars) {
-    car.move();
+  for (car of deadCars) {
     car.show();
   }
+
+  for (let i = cars.length - 1; i >= 0; i--) {
+    let car = cars[i];
+    if (!car.dead) {
+      car.move();
+      car.hit(); //TODO: Fix if all cars die
+    }
+    car.show();
+    if (car.dead) {
+      deadCars.push(cars[i]);
+      cars.splice(i, 1);
+    }
+  }
+  obstacle.show();
 
   time++;
 }
@@ -87,4 +109,8 @@ function run() {
 function pickRand(a, b) { //50/50 chance to return a or b
   if (random(1) < 0.5) return a;
   else return b;
+}
+
+function simplifyAngle(angle) {
+  return (round((angle / (QUARTER_PI))) * QUARTER_PI) % PI;
 }
