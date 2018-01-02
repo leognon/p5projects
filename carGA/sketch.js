@@ -13,7 +13,7 @@ let cars = [];
 let deadCars = [];
 let matingPool = [];
 let nextGen = [];
-let populationSize = 50;
+let populationSize = 150;
 let lifetime = 350;
 let time;
 let startX;
@@ -47,20 +47,21 @@ function setup() {
 function draw() {
   background(220);
 
-  if (time < lifetime) {
+  if (time < lifetime && cars.length > 0) {
     run(); //Run the simulation
   } else {
     nextGen = []; //The next generation
     matingPool = []; //The mating pool to breed the next gen
+    if (cars.length <= 3) cars = cars.concat(deadCars); //Must be at least 3 possible parents
 
     for (let i = 0; i < cars.length; i++) {
       let car = cars[i];
-      if (car.dead == true) return;
 
-      let fitness = car.pos.x; //Better to go to the right
+      let fitness = max(1, car.pos.x); //Better to go to the right
+      fitness *= fitness;
       //Evalute the fitness
 
-      let amt = round(fitness / 2); //How many of that cars genes will get passed on
+      let amt = round(fitness / 100); //How many of that cars genes will get passed on
       for (let j = 0; j < amt; j++) {
         matingPool.push(i); //Create mating pool of indeces, with better cars having more places in array
       }
@@ -74,8 +75,10 @@ function draw() {
         parentB = matingPool[floor(random(matingPool.length))];
 
         attempt++;
-        console.log("Could only find one car!");
-        if (attempt > 1000) return;
+        if (attempt > 500) {
+          return;
+          console.log("HAD TO USE DUPLICATE PARENT!!");
+        }
       }
 
       let childGenes = crossover(cars[parentA], cars[parentB]); //Crossover to create new genes from parents
