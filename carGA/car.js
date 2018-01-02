@@ -24,7 +24,7 @@ class Car {
       return;
     }
 
-    for (obstacle of obstacles) {
+    for (let obstacle of obstacles) {
       let heading = this.vel.heading();
 
       let a = abs((simplifyAngle(heading) + HALF_PI) % PI);
