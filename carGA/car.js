@@ -15,6 +15,15 @@ class Car {
   }
 
   hit() {
+    if (this.pos.x < this.genes.width ||
+      this.pos.x > width - this.genes.width ||
+      this.pos.y < this.genes.width ||
+      this.pos.y > height - this.genes.width) {
+
+      this.dead = true;
+      return;
+    }
+
     for (obstacle of obstacles) {
       let heading = this.vel.heading();
 
