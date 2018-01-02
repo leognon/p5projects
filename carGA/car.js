@@ -15,36 +15,38 @@ class Car {
   }
 
   hit() {
-    let heading = this.vel.heading();
+    for (obstacle of obstacles) {
+      let heading = this.vel.heading();
 
-    let a = abs((simplifyAngle(heading) + HALF_PI) % PI);
+      let a = abs((simplifyAngle(heading) + HALF_PI) % PI);
 
-    if (a === 0) { //Facing up or down
-      if (collideRect(obstacle.pos, obstacle.width, obstacle.height, p5.Vector.sub(this.pos, this.halfDim), this.genes.width, this.genes.height)) {
-        this.dead = true;
+      if (a === 0) { //Facing up or down
+        if (collideRect(obstacle.pos, obstacle.width, obstacle.height, p5.Vector.sub(this.pos, this.halfDim), this.genes.width, this.genes.height)) {
+          this.dead = true;
+        }
+      } else if (a == HALF_PI) { //Facing left or right
+        if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x - this.halfDim.y, this.pos.y - this.halfDim.x), this.genes.height, this.genes.width)) {
+          this.dead = true;
+        }
+      } else if (a == QUARTER_PI) { //Facing 45 or 225 degrees
+        let theW = this.genes.height * abs(sin(heading)) + this.genes.width * abs(cos(heading));
+        let theH = this.genes.height * abs(cos(heading)) + this.genes.width * abs(sin(heading))
+        if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(-theW / 2 + this.pos.x, this.pos.y), theW / 2, theH / 2)) {
+          this.dead = true;
+        } else if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x, -theH / 2 + this.pos.y), theW / 2, theH / 2)) {
+          this.dead = true;
+        }
+      } else if (a == QUARTER_PI * 3) { //Facing 135 or 315 degrees
+        let theW = this.genes.height * abs(sin(heading)) + this.genes.width * abs(cos(heading));
+        let theH = this.genes.height * abs(cos(heading)) + this.genes.width * abs(sin(heading));
+        if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x, this.pos.y), theW / 2, theH / 2)) {
+          this.dead = true;
+        } else if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(-theW / 2 + this.pos.x, -theH / 2 + this.pos.y), theW / 2, theH / 2)) {
+          this.dead = true;
+        }
+      } else {
+        console.log("ANGLE WAS AN INVALID VALUE: " + a);
       }
-    } else if (a == HALF_PI) { //Facing left or right
-      if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x - this.halfDim.y, this.pos.y - this.halfDim.x), this.genes.height, this.genes.width)) {
-        this.dead = true;
-      }
-    } else if (a == QUARTER_PI) { //Facing 45 or 225 degrees
-      let theW = this.genes.height * abs(sin(heading)) + this.genes.width * abs(cos(heading));
-      let theH = this.genes.height * abs(cos(heading)) + this.genes.width * abs(sin(heading))
-      if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(-theW / 2 + this.pos.x, this.pos.y), theW / 2, theH / 2)) {
-        this.dead = true;
-      } else if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x, -theH / 2 + this.pos.y), theW / 2, theH / 2)) {
-        this.dead = true;
-      }
-    } else if (a == QUARTER_PI * 3) { //Facing 135 or 315 degrees
-      let theW = this.genes.height * abs(sin(heading)) + this.genes.width * abs(cos(heading));
-      let theH = this.genes.height * abs(cos(heading)) + this.genes.width * abs(sin(heading));
-      if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x, this.pos.y), theW / 2, theH / 2)) {
-        this.dead = true;
-      } else if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(-theW / 2 + this.pos.x, -theH / 2 + this.pos.y), theW / 2, theH / 2)) {
-        this.dead = true;
-      }
-    } else {
-      console.log("ANGLE WAS AN INVALID VALUE: " + a);
     }
   }
 

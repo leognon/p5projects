@@ -19,13 +19,19 @@ let time;
 let startX;
 let startY;
 let mutationRate = 0.005;
-let showDebug = false;
+let showDebug = true;
+let obstacles = [];
 
-let obstacle;
+let drawingObstacle = {
+  drawing: false,
+  x: 0,
+  y: 0
+};
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   time = 0;
+  obstacles = [];
 
   startX = 100;
   startY = height / 2;
@@ -68,6 +74,7 @@ function draw() {
         parentB = matingPool[floor(random(matingPool.length))];
 
         attempt++;
+        console.log("Could only find one car!");
         if (attempt > 1000) return;
       }
 
@@ -85,6 +92,13 @@ function draw() {
 }
 
 function run() {
+  if (drawingObstacle.drawing) {
+    noFill();
+    stroke(0);
+    strokeWeight(3);
+    rect(drawingObstacle.x, drawingObstacle.y, mouseX - drawingObstacle.x, mouseY - drawingObstacle.y);
+  }
+
   for (car of deadCars) {
     car.show();
   }
@@ -101,9 +115,31 @@ function run() {
       cars.splice(i, 1);
     }
   }
-  obstacle.show();
+
+  for (obstacle of obstacles) {
+    obstacle.show();
+  }
 
   time++;
+}
+
+function mousePressed() {
+  if (drawingObstacle.drawing == false) {
+    drawingObstacle.x = mouseX;
+    drawingObstacle.y = mouseY;
+    drawingObstacle.drawing = true;
+  } else {
+    let width = mouseX - drawingObstacle.x;
+    let height = mouseY - drawingObstacle.y;
+
+    if (width < 0) drawingObstacle.x += width;
+    if (height < 0) drawingObstacle.y += height;
+    height = abs(height);
+    width = abs(width);
+
+    obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
+    drawingObstacle.drawing = false;
+  }
 }
 
 function pickRand(a, b) { //50/50 chance to return a or b
