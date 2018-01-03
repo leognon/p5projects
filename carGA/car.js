@@ -3,6 +3,8 @@ class Car {
     this.pos = createVector(x, y); //Position
     this.vel = createVector(0, 0); //Velocity
     this.dead = false;
+    this.prob;
+    this.fitness;
 
     this.genes = genes; //Genes (acc force for each frame, maxSpeed, accRate, width, and height)
     this.halfDim = createVector(this.genes.width / 2, this.genes.height / 2);

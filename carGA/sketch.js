@@ -11,14 +11,13 @@ let limits = { //For generating genes and limiting cars
 
 let cars = [];
 let deadCars = [];
-let matingPool = [];
 let nextGen = [];
-let populationSize = 400;
-let lifetime = 350;
+let populationSize = 200;
+let lifetime = 150;
 let time;
 let startX;
 let startY;
-let mutationRate = 0.005;
+let mutationRate = 0.001;
 let showDebug = false;
 let obstacles = [];
 
@@ -45,34 +44,30 @@ function setup() {
 }
 
 function draw() {
-
   if (time < lifetime && cars.length > 0) {
     background(220);
     run(); //Run the simulation
   } else {
     nextGen = []; //The next generation
-    matingPool = []; //The mating pool to breed the next gen
     if (cars.length <= 3) cars = cars.concat(deadCars); //Must be at least 3 possible parents
 
-    for (let i = 0; i < cars.length; i++) {
-      let car = cars[i];
-
+    let sumFit = 0;
+    for (car of cars) {
       let fitness = max(1, car.pos.x); //Better to go to the right
-      fitness *= fitness;
-      //Evalute the fitness
-
-      let amt = round(fitness / 100); //How many of that cars genes will get passed on
-      for (let j = 0; j < amt; j++) {
-        matingPool.push(i); //Create mating pool of indeces, with better cars having more places in array
-      }
+      car.fitness = (fitness * fitness) / 10000; //Evalute the fitness
+      sumFit += car.fitness;
+    }
+    for (car of cars) {
+      car.prob = (car.fitness / sumFit);
     }
 
     for (let i = 0; i < populationSize; i++) {
-      let parentA = matingPool[floor(random(matingPool.length))]; //Pick the index of the first parent
-      let parentB = matingPool[floor(random(matingPool.length))]; //Pick the index of the second parent
+      let parentAIndex = pickIndex(cars); //matingPool[floor(random(matingPool.length))]; //Pick the index of the first parent
+      let parentBIndex = pickIndex(cars); //matingPool[floor(random(matingPool.length))]; //Pick the index of the second parent
+
       let attempt = 0;
-      while (parentA == parentB) { //Make sure both parents are different
-        parentB = matingPool[floor(random(matingPool.length))];
+      while (parentAIndex == parentBIndex) { //Make sure both parents are different
+        parentBIndex = pickIndex(cars);
 
         attempt++;
         if (attempt > 500) {
@@ -81,7 +76,7 @@ function draw() {
         }
       }
 
-      let childGenes = crossover(cars[parentA], cars[parentB]); //Crossover to create new genes from parents
+      let childGenes = crossover(cars[parentAIndex], cars[parentBIndex]); //Crossover to create new genes from parents
 
       //Randomly mutate genes of cars
 
@@ -153,6 +148,16 @@ function mousePressed() {
       }
     }
   }
+}
+
+function pickIndex(list) {
+  var index = -1;
+  var r = random(1);
+  while (r > 0) {
+    index++;
+    r -= list[index].prob;
+  }
+  return index;
 }
 
 function pickRand(a, b) { //50/50 chance to return a or b
