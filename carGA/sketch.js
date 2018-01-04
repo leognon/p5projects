@@ -54,7 +54,7 @@ function draw() {
     let sumFit = 0;
     for (car of cars) {
       let fitness = max(1, car.pos.x); //Better to go to the right
-      car.fitness = (fitness * fitness) / 10000; //Evalute the fitness
+      car.fitness = ((fitness * fitness) / 10000) * (!car.dead) ? 1.5 : 1; //Evalute the fitness
       sumFit += car.fitness;
     }
     for (car of cars) {
