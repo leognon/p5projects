@@ -105,7 +105,7 @@ function run() {
 
   for (let i = cars.length - 1; i >= 0; i--) {
     let car = cars[i];
-    if (car.dead == false && !paused) {
+    if (car.dead == false && (!paused && !drawingObstacle.drawing)) {
       car.move();
       car.hit();
     }
@@ -122,11 +122,11 @@ function run() {
 
   fill(0);
   noStroke();
-  textSize(25);
-  let txt = "Generation: " + generation + "\nFrames left: " + (lifetime - time) + "\nAlive: " + cars.length + " Dead: " + deadCars.length + "\nFrameRate: " + floor(frameRate()) + "\nPopulation Size: " + populationSize + "\nMutation Rate: " + mutationRate;
+  textSize(20);
+  let txt = "Generation: " + generation + "\nFrames left: " + (lifetime - time) + "\nAlive: " + cars.length + " Dead: " + deadCars.length + "\nFrameRate: " + nf(frameRate(), 2, 1) + "\nPopulation Size: " + populationSize + "\nMutation Rate: " + mutationRate;
   text(txt, 10, 25);
 
-  if (!paused) {
+  if (!paused && !drawingObstacle.drawing) {
     time++;
   }
 }
@@ -151,8 +151,8 @@ function mousePressed() {
 
       if (width < 0) drawingObstacle.x += width;
       if (height < 0) drawingObstacle.y += height;
-      height = abs(height);
-      width = abs(width);
+      height = max(3, abs(height));
+      width = max(3, abs(width));
 
       obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
       drawingObstacle.drawing = false;
