@@ -12,14 +12,16 @@ let limits = { //For generating genes and limiting cars
 let cars = [];
 let deadCars = [];
 let nextGen = [];
-let populationSize = 200;
+let populationSize = 50;
 let lifetime = 150;
+let paused = false;
 let time;
 let startX;
 let startY;
 let mutationRate = 0.001;
 let showDebug = false;
 let obstacles = [];
+let generation = 0;
 
 let drawingObstacle = {
   drawing: false,
@@ -49,7 +51,7 @@ function draw() {
     run(); //Run the simulation
   } else {
     nextGen = []; //The next generation
-    if (cars.length <= 3) cars = cars.concat(deadCars); //Must be at least 3 possible parents
+    if (cars.length < 3) cars = cars.concat(deadCars); //Must be at least 3 possible parents
 
     let sumFit = 0;
     for (car of cars) {
@@ -62,8 +64,8 @@ function draw() {
     }
 
     for (let i = 0; i < populationSize; i++) {
-      let parentAIndex = pickIndex(cars); //matingPool[floor(random(matingPool.length))]; //Pick the index of the first parent
-      let parentBIndex = pickIndex(cars); //matingPool[floor(random(matingPool.length))]; //Pick the index of the second parent
+      let parentAIndex = pickIndex(cars); //Pick the index of the first parent
+      let parentBIndex = pickIndex(cars); //Pick the index of the second parent
 
       let attempt = 0;
       while (parentAIndex == parentBIndex) { //Make sure both parents are different
@@ -85,6 +87,7 @@ function draw() {
 
     cars = nextGen; //The next Gen become the current Gen
     deadCars = [];
+    generation++;
     time = 0; //Restart the time
   }
 }
@@ -96,14 +99,13 @@ function run() {
     strokeWeight(3);
     rect(drawingObstacle.x, drawingObstacle.y, mouseX - drawingObstacle.x, mouseY - drawingObstacle.y);
   }
-
   for (let car of deadCars) {
     car.show();
   }
 
   for (let i = cars.length - 1; i >= 0; i--) {
     let car = cars[i];
-    if (!car.dead) {
+    if (car.dead == false && !paused) {
       car.move();
       car.hit();
     }
@@ -118,7 +120,23 @@ function run() {
     obstacle.show();
   }
 
-  time++;
+  fill(0);
+  noStroke();
+  textSize(25);
+  let txt = "Generation: " + generation + "\nFrames left: " + (lifetime - time) + "\nAlive: " + cars.length + " Dead: " + deadCars.length + "\nFrameRate: " + floor(frameRate()) + "\nPopulation Size: " + populationSize + "\nMutation Rate: " + mutationRate;
+  text(txt, 10, 25);
+
+  if (!paused) {
+    time++;
+  }
+}
+
+function keyPressed() {
+  if (key == 'P') {
+    paused = !paused;
+  } else if (keyCode == ESCAPE && drawingObstacle.drawing) {
+    drawingObstacle.drawing = false;
+  }
 }
 
 function mousePressed() {
