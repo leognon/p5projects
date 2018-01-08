@@ -9,6 +9,8 @@ let limits = { //For generating genes and limiting cars
   maxH: 70
 }
 
+let mode = 0;
+
 let cars = [];
 let deadCars = [];
 let nextGen = [];
@@ -29,30 +31,72 @@ let drawingObstacle = {
   y: 0
 };
 
+let DOM = {
+  startButton: null,
+  editDoneButton: null,
+  editSaveButton: null,
+  editButton: null
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  time = 0;
-  obstacles = [];
+  reset();
 
-  startX = 100;
-  startY = height / 2;
+  DOM.startButton = makeButton("START", width / 2 - 75, height - 125, 150, 100, 40, false, () => {
+    mode = 2;
+    DOM.startButton.hide();
+    DOM.editDoneButton.show();
+    reset();
+  });
+
+  DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => {
+    mode = 1;
+    drawingObstacle.drawing = false;
+    DOM.editDoneButton.hide();
+    DOM.editButton.show();
+  });
+
+  DOM.editButton = makeButton("EDIT", 10, 160, 100, 50, 25, true, () => {
+    mode = 2;
+    DOM.editButton.hide();
+    DOM.editDoneButton.show();
+  });
+
   // randomSeed(99);
-
-  for (let i = 0; i < populationSize; i++) { //Create the initial population
-    cars.push(new Car());
-  }
-
-  obstacle = new Obstacle(325, 325, 100, 200);
 }
 
 function draw() {
-  simulate();
+  if (mode == 0) {
+    startScreen();
+  } else if (mode == 1) {
+    simulate();
+  } else if (mode == 2) {
+    editMode();
+  }
 }
 
+function reset() {
+  populationSize = 150; //Editable vars
+  lifetime = 250;
+  startX = width / 2;
+  startY = height / 2;
+  mutationRate = 0.001;
 
+  time = 0;
+  for (let i = 0; i < populationSize; i++) { //Create the initial population
+    cars.push(new Car());
+  }
+  deadCars = [];
+  nextGen = [];
+  paused = false;
+  showDebug = false;
+  obstacles = [];
+  generation = 0;
+  drawingObstacle.drawing = false;
+}
 
 function keyPressed() {
-  if (key == 'P') {
+  if (key == 'P' && mode == 1) {
     paused = !paused;
   } else if (keyCode == ESCAPE && drawingObstacle.drawing) {
     drawingObstacle.drawing = false;
@@ -60,6 +104,8 @@ function keyPressed() {
 }
 
 function mousePressed() {
+  if (mode != 2) return;
+
   if (mouseButton == LEFT) {
     if (drawingObstacle.drawing == false) {
       drawingObstacle.x = mouseX;
@@ -86,6 +132,16 @@ function mousePressed() {
       }
     }
   }
+}
+
+function makeButton(txt, x, y, width, height, fontSize, hide, clicked) {
+  let button = createButton(txt);
+  button.style("font-size", fontSize + "px");
+  button.size(width, height);
+  button.position(x, y);
+  button.mouseReleased(clicked);
+  if (hide) button.hide();
+  return button;
 }
 
 function pickIndex(list) {

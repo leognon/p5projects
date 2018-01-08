@@ -46,19 +46,13 @@ function simulate() {
 }
 
 function run() {
-  if (drawingObstacle.drawing) {
-    noFill();
-    stroke(0);
-    strokeWeight(3);
-    rect(drawingObstacle.x, drawingObstacle.y, mouseX - drawingObstacle.x, mouseY - drawingObstacle.y);
-  }
   for (let car of deadCars) {
     car.show();
   }
 
   for (let i = cars.length - 1; i >= 0; i--) {
     let car = cars[i];
-    if (car.dead == false && (!paused && !drawingObstacle.drawing)) {
+    if (car.dead == false && (!paused)) {
       car.move();
       car.hit();
     }
@@ -76,10 +70,40 @@ function run() {
   fill(0);
   noStroke();
   textSize(20);
+  textAlign(LEFT);
   let txt = "Generation: " + generation + "\nFrames left: " + (lifetime - time) + "\nAlive: " + cars.length + " Dead: " + deadCars.length + "\nFrameRate: " + nf(frameRate(), 2, 1) + "\nPopulation Size: " + populationSize + "\nMutation Rate: " + mutationRate;
   text(txt, 10, 25);
 
-  if (!paused && !drawingObstacle.drawing) {
+  if (!paused) {
     time++;
   }
+}
+
+function editMode() {
+  background(220);
+  for (let obstacle of obstacles) {
+    obstacle.show();
+  }
+  for (let car of deadCars) {
+    car.show();
+  }
+  for (let car of cars) {
+    car.show();
+  }
+
+  if (drawingObstacle.drawing) {
+    noFill();
+    stroke(0);
+    strokeWeight(3);
+    rect(drawingObstacle.x, drawingObstacle.y, mouseX - drawingObstacle.x, mouseY - drawingObstacle.y);
+  }
+}
+
+function startScreen() {
+  background(220);
+  fill(0);
+  noStroke();
+  textSize(50);
+  textAlign(CENTER);
+  text("Evolving Car Genetic Algorithm", width / 2, 75);
 }
