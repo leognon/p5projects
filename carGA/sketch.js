@@ -35,7 +35,9 @@ let DOM = {
   startButton: null,
   editDoneButton: null,
   editSaveButton: null,
-  editButton: null
+  editButton: null,
+  editVarsContainer: null,
+  editVars: []
 }
 
 function setup() {
@@ -43,24 +45,37 @@ function setup() {
   reset();
 
   DOM.startButton = makeButton("START", width / 2 - 75, height - 125, 150, 100, 40, false, () => {
-    mode = 2;
+    mode = 2; //Start game, goes to edit mode
+    DOM.editVarsContainer.show();
     DOM.startButton.hide();
     DOM.editDoneButton.show();
     reset();
   });
 
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => {
-    mode = 1;
+    mode = 1; //Finish editing, goes to simulation
     drawingObstacle.drawing = false;
+    DOM.editVarsContainer.hide();
     DOM.editDoneButton.hide();
     DOM.editButton.show();
   });
 
   DOM.editButton = makeButton("EDIT", 10, 160, 100, 50, 25, true, () => {
-    mode = 2;
+    mode = 2; //Edit button, goes to edit mode
+    DOM.editVarsContainer.show();
     DOM.editButton.hide();
     DOM.editDoneButton.show();
   });
+
+  let editVarsX = 10;
+  DOM.editVarsContainer = createDiv("").position(editVarsX, 0).size(500, 500).hide();
+
+  DOM.editVars[0] = makeInput("Population Size: ", 150, editVarsX, 0, false).text.parent(DOM.editVarsContainer);
+  DOM.editVars[1] = makeInput("Lifetime: ", 150, editVarsX, 0, false).text.parent(DOM.editVarsContainer);
+
+  DOM.editVars[2] = makeInput("MutationRate: ", 150, editVarsX, 0, false).text.parent(DOM.editVarsContainer);
+  //TODO Make editvars for each of the below, maube use div, and after editDone is clicked, set all of the vars to the new value
+
 
   // randomSeed(99);
 }
@@ -142,6 +157,17 @@ function makeButton(txt, x, y, width, height, fontSize, hide, clicked) {
   button.mouseReleased(clicked);
   if (hide) button.hide();
   return button;
+}
+
+function makeInput(name, val, x, y, hide, type = "number") {
+  let obj = {
+    text: createP(name), //.position(x, y),
+    inp: createInput(val, type).size(35, text.height)
+  }
+  obj.inp.parent(obj.text);
+  if (hide) obj.text.hide();
+
+  return obj;
 }
 
 function pickIndex(list) {
