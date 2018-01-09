@@ -65,17 +65,18 @@ function setup() {
     DOM.editVarsContainer.show();
     DOM.editButton.hide();
     DOM.editDoneButton.show();
+
   });
 
   let editVarsX = 10;
-  DOM.editVarsContainer = createDiv("").position(editVarsX, 0).size(500, 500).hide();
+  DOM.editVarsContainer = createDiv("").position(editVarsX, 0).hide();
 
-  DOM.editVars[0] = makeInput("Population Size: ", 150, editVarsX, 0, false).text.parent(DOM.editVarsContainer);
-  DOM.editVars[1] = makeInput("Lifetime: ", 150, editVarsX, 0, false).text.parent(DOM.editVarsContainer);
-
-  DOM.editVars[2] = makeInput("MutationRate: ", 150, editVarsX, 0, false).text.parent(DOM.editVarsContainer);
+  DOM.editVars[0] = makeInput("Population Size: ", populationSize, editVarsX, 0, false, DOM.editVarsContainer);
+  DOM.editVars[1] = makeInput("Lifetime: ", lifetime, editVarsX, 0, false, DOM.editVarsContainer);
+  DOM.editVars[2] = makeInput("MutationRate: ", mutationRate, editVarsX, 0, false, DOM.editVarsContainer);
+  DOM.editVars[2].inp.size(50);
+  DOM.editVars[2].inp.attribute("step", 0.001);
   //TODO Make editvars for each of the below, maube use div, and after editDone is clicked, set all of the vars to the new value
-
 
   // randomSeed(99);
 }
@@ -159,10 +160,10 @@ function makeButton(txt, x, y, width, height, fontSize, hide, clicked) {
   return button;
 }
 
-function makeInput(name, val, x, y, hide, type = "number") {
+function makeInput(name, val, x, y, hide, parent, type = "number") {
   let obj = {
-    text: createP(name), //.position(x, y),
-    inp: createInput(val, type).size(35, text.height)
+    text: createP(name).parent(parent), //.position(x, y),
+    inp: createInput(val, type).size(40, text.height)
   }
   obj.inp.parent(obj.text);
   if (hide) obj.text.hide();
