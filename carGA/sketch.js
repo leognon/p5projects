@@ -41,7 +41,7 @@ let DOM = {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(windowWidth, windowHeight).mousePressed(canvasClicked);
   reset();
 
   DOM.startButton = makeButton("START", width / 2 - 75, height - 125, 150, 100, 40, false, () => {
@@ -79,7 +79,6 @@ function setup() {
   DOM.editVars[2] = makeInput("MutationRate: ", mutationRate, editVarsX, 0, false, DOM.editVarsContainer);
   DOM.editVars[2].inp.size(50);
   DOM.editVars[2].inp.attribute("step", 0.001);
-  //TODO Make editvars for each of the below, maube use div, and after editDone is clicked, set all of the vars to the new value
 
   // randomSeed(99);
 }
@@ -122,10 +121,10 @@ function keyPressed() {
   }
 }
 
-function mousePressed() {
+function canvasClicked(evt) {
   if (mode != 2) return;
 
-  if (mouseButton == LEFT) {
+  if ( /*mouseButton == LEFT*/ evt.button === 0) {
     if (drawingObstacle.drawing == false) {
       drawingObstacle.x = mouseX;
       drawingObstacle.y = mouseY;
@@ -142,7 +141,7 @@ function mousePressed() {
       obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
       drawingObstacle.drawing = false;
     }
-  } else if (mouseButton == RIGHT) {
+  } else if ( /*mouseButton == RIGHT*/ evt.button == 2 && !drawingObstacle.drawing) {
     for (let i = obstacles.length - 1; i >= 0; i--) {
       let obstacle = obstacles[i];
       if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {
