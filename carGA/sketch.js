@@ -53,6 +53,10 @@ function setup() {
   });
 
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => {
+    populationSize = DOM.editVars[0].inp.value();
+    lifetime = DOM.editVars[1].inp.value();
+    mutationRate = DOM.editVars[2].inp.value();
+
     mode = 1; //Finish editing, goes to simulation
     drawingObstacle.drawing = false;
     DOM.editVarsContainer.hide();
@@ -65,7 +69,6 @@ function setup() {
     DOM.editVarsContainer.show();
     DOM.editButton.hide();
     DOM.editDoneButton.show();
-
   });
 
   let editVarsX = 10;
