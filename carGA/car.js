@@ -65,7 +65,7 @@ class Car {
     push();
     translate(this.pos.x, this.pos.y); //Translate to center
     rotate(this.vel.heading() + HALF_PI); //Rotate towards direction
-    fill(50); //Greyish color
+    fill(50, 230); //Greyish color
     noStroke();
     rect(-this.genes.width / 2, -this.genes.height / 2, this.genes.width, this.genes.height); //Draw rect
     pop();
