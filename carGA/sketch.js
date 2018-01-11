@@ -44,28 +44,32 @@ function setup() {
   createCanvas(windowWidth, windowHeight).mousePressed(canvasClicked);
   reset();
 
-  DOM.startButton = makeButton("START", width / 2 - 75, height - 125, 150, 100, 40, false, () => {
-    mode = 2; //Start game, goes to edit mode
+  DOM.startButton = makeButton("START", width / 2 - 75, height - 125, 150, 100, 40, false, () => { //Start game, goes to edit mode
+    mode = 2;
     DOM.editVarsContainer.show();
     DOM.startButton.hide();
     DOM.editDoneButton.show();
     reset();
   });
 
-  DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => {
-    populationSize = DOM.editVars[0].inp.value();
-    lifetime = DOM.editVars[1].inp.value();
-    mutationRate = DOM.editVars[2].inp.value();
+  DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => { //Finish editing, goes to simulation
+    // if (lifetime != DOM.editVars[1].inp.value()) { //If lifetime was changed, create new genes
 
-    mode = 1; //Finish editing, goes to simulation
+    // }
+
+    populationSize = int(DOM.editVars[0].inp.value());
+    lifetime = int(DOM.editVars[1].inp.value());
+    mutationRate = int(DOM.editVars[2].inp.value());
+
+    mode = 1;
     drawingObstacle.drawing = false;
     DOM.editVarsContainer.hide();
     DOM.editDoneButton.hide();
     DOM.editButton.show();
   });
 
-  DOM.editButton = makeButton("EDIT", 10, 160, 100, 50, 25, true, () => {
-    mode = 2; //Edit button, goes to edit mode
+  DOM.editButton = makeButton("EDIT", 10, 160, 100, 50, 25, true, () => { //Edit button, goes to edit mode
+    mode = 2;
     DOM.editVarsContainer.show();
     DOM.editButton.hide();
     DOM.editDoneButton.show();
@@ -96,7 +100,7 @@ function draw() {
 function reset() {
   populationSize = 150; //Editable vars
   lifetime = 250;
-  startX = width / 2;
+  startX = 45;
   startY = height / 2;
   mutationRate = 0.001;
 
