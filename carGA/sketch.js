@@ -53,9 +53,13 @@ function setup() {
   });
 
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => { //Finish editing, goes to simulation
-    // if (lifetime != DOM.editVars[1].inp.value()) { //If lifetime was changed, create new genes
-
-    // }
+    if (lifetime != DOM.editVars[1].inp.value()) { //If lifetime was changed, create new genes
+      for (let car of cars) {
+        for (let i = car.genes.accs.length; i < DOM.editVars[1].inp.value(); i++) {
+          car.genes.accs.push((p5.Vector.random2D().mult(car.genes.accRate)));
+        }
+      }
+    }
 
     populationSize = int(DOM.editVars[0].inp.value());
     lifetime = int(DOM.editVars[1].inp.value());
