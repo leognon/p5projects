@@ -63,7 +63,7 @@ function setup() {
 
     populationSize = int(DOM.editVars[0].inp.value());
     lifetime = int(DOM.editVars[1].inp.value());
-    mutationRate = int(DOM.editVars[2].inp.value());
+    mutationRate = parseFloat(DOM.editVars[2].inp.value());
 
     mode = 1;
     drawingObstacle.drawing = false;
