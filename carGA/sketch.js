@@ -126,6 +126,9 @@ function keyPressed() {
     paused = !paused;
   } else if (keyCode == ESCAPE && drawingObstacle.drawing) {
     drawingObstacle.drawing = false;
+
+    DOM.editDoneButton.show();
+    DOM.editVarsContainer.show();
   }
 }
 
@@ -137,6 +140,11 @@ function canvasClicked(evt) {
       drawingObstacle.x = mouseX;
       drawingObstacle.y = mouseY;
       drawingObstacle.drawing = true;
+
+      //Hide DOM elements when drawing
+      DOM.editDoneButton.hide();
+      DOM.editVarsContainer.hide();
+
     } else {
       let width = mouseX - drawingObstacle.x;
       let height = mouseY - drawingObstacle.y;
@@ -148,6 +156,10 @@ function canvasClicked(evt) {
 
       obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
       drawingObstacle.drawing = false;
+
+      //Show DOM elements after drawing
+      DOM.editDoneButton.show();
+      DOM.editVarsContainer.show();
     }
   } else if ( /*mouseButton == RIGHT*/ evt.button == 2 && !drawingObstacle.drawing) {
     for (let i = obstacles.length - 1; i >= 0; i--) {
