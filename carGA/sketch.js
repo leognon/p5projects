@@ -25,6 +25,8 @@ let showDebug = false;
 let obstacles = [];
 let generation = 0;
 
+let tool = 0;
+
 let drawingObstacle = {
   drawing: false,
   x: 0,
@@ -37,7 +39,9 @@ let DOM = {
   editSaveButton: null,
   editButton: null,
   editVarsContainer: null,
-  editVars: []
+  editVars: [],
+  editObstacle: null,
+  editSpawn: null
 }
 
 function setup() {
@@ -49,10 +53,19 @@ function setup() {
     DOM.editVarsContainer.show();
     DOM.startButton.hide();
     DOM.editDoneButton.show();
+    DOM.editObstacle.show();
+    DOM.editSpawn.show();
     reset();
   });
 
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, true, () => { //Finish editing, goes to simulation
+    if (time === 0 && generation === 0) {
+      for (let car of cars) {
+        car.pos.x = startX;
+        car.pos.y = startY;
+      }
+    }
+
     if (lifetime != DOM.editVars[1].inp.value()) { //If lifetime was changed, create new genes
       for (let car of cars) {
         for (let i = car.genes.accs.length; i < DOM.editVars[1].inp.value(); i++) {
@@ -60,7 +73,7 @@ function setup() {
         }
       }
     }
-
+    //TODO Fix spawnpoint not immedietly changing
     populationSize = int(DOM.editVars[0].inp.value());
     lifetime = int(DOM.editVars[1].inp.value());
     mutationRate = parseFloat(DOM.editVars[2].inp.value());
@@ -70,6 +83,8 @@ function setup() {
     DOM.editVarsContainer.hide();
     DOM.editDoneButton.hide();
     DOM.editButton.show();
+    DOM.editObstacle.hide();
+    DOM.editSpawn.hide();
   });
 
   DOM.editButton = makeButton("EDIT", 10, 160, 100, 50, 25, true, () => { //Edit button, goes to edit mode
@@ -77,6 +92,21 @@ function setup() {
     DOM.editVarsContainer.show();
     DOM.editButton.hide();
     DOM.editDoneButton.show();
+    DOM.editObstacle.show();
+    DOM.editSpawn.show();
+  });
+
+  DOM.editObstacle = makeButton("Obstacle", 125, height - 61, 110, 56, 25, true, () => {
+    tool = 0;
+    DOM.editObstacle.class("selected");
+    DOM.editSpawn.class("");
+  });
+  DOM.editObstacle.class("selected");
+
+  DOM.editSpawn = makeButton("SpawnPoint", 245, height - 61, 160, 56, 25, true, () => {
+    tool = 1;
+    DOM.editSpawn.class("selected");
+    DOM.editObstacle.class("");
   });
 
   let editVarsX = 10;
@@ -135,8 +165,8 @@ function keyPressed() {
 function canvasClicked(evt) {
   if (mode != 2) return;
 
-  if ( /*mouseButton == LEFT*/ evt.button === 0) {
-    if (drawingObstacle.drawing == false) {
+  if (evt.button === 0 && tool === 0) { //Left clicked to draw obstacle
+    if (drawingObstacle.drawing == false) { //Start drawing
       drawingObstacle.x = mouseX;
       drawingObstacle.y = mouseY;
       drawingObstacle.drawing = true;
@@ -144,8 +174,10 @@ function canvasClicked(evt) {
       //Hide DOM elements when drawing
       DOM.editDoneButton.hide();
       DOM.editVarsContainer.hide();
+      DOM.editObstacle.hide();
+      DOM.editSpawn.hide();
 
-    } else {
+    } else { //Stop drawing and place obstacle
       let width = mouseX - drawingObstacle.x;
       let height = mouseY - drawingObstacle.y;
 
@@ -160,8 +192,13 @@ function canvasClicked(evt) {
       //Show DOM elements after drawing
       DOM.editDoneButton.show();
       DOM.editVarsContainer.show();
+      DOM.editObstacle.show();
+      DOM.editSpawn.show();
     }
-  } else if ( /*mouseButton == RIGHT*/ evt.button == 2 && !drawingObstacle.drawing) {
+  } else if (evt.button === 0 && tool == 1) {
+    startX = mouseX;
+    startY = mouseY;
+  } else if (evt.button == 2 && !drawingObstacle.drawing) { //Right click to remove obstacle
     for (let i = obstacles.length - 1; i >= 0; i--) {
       let obstacle = obstacles[i];
       if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {

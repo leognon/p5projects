@@ -91,6 +91,9 @@ function editMode() {
     car.show();
   }
 
+  fill(84, 212, 255);
+  ellipse(startX, startY, 30, 30);
+
   if (drawingObstacle.drawing) {
     noFill();
     stroke(0);
