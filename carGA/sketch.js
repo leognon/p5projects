@@ -24,6 +24,7 @@ let mutationRate = 0.001;
 let showDebug = false;
 let obstacles = [];
 let generation = 0;
+let speed = 1;
 
 let tool = 0;
 
@@ -41,7 +42,8 @@ let DOM = {
   editVarsContainer: null,
   editVars: [],
   editObstacle: null,
-  editSpawn: null
+  editSpawn: null,
+  speedInp: null
 }
 
 function setup() {
@@ -73,7 +75,7 @@ function setup() {
         }
       }
     }
-    //TODO Fix spawnpoint not immedietly changing
+
     populationSize = int(DOM.editVars[0].inp.value());
     lifetime = int(DOM.editVars[1].inp.value());
     mutationRate = parseFloat(DOM.editVars[2].inp.value());
@@ -85,12 +87,14 @@ function setup() {
     DOM.editButton.show();
     DOM.editObstacle.hide();
     DOM.editSpawn.hide();
+    DOM.speedInp.text.show();
   });
 
-  DOM.editButton = makeButton("EDIT", 10, 160, 100, 50, 25, true, () => { //Edit button, goes to edit mode
+  DOM.editButton = makeButton("EDIT", 10, 190, 100, 50, 25, true, () => { //Edit button, goes to edit mode
     mode = 2;
     DOM.editVarsContainer.show();
     DOM.editButton.hide();
+    DOM.speedInp.text.hide();
     DOM.editDoneButton.show();
     DOM.editObstacle.show();
     DOM.editSpawn.show();
@@ -112,11 +116,21 @@ function setup() {
   let editVarsX = 10;
   DOM.editVarsContainer = createDiv("").position(editVarsX, 0).hide();
 
-  DOM.editVars[0] = makeInput("Population Size: ", populationSize, editVarsX, 0, false, DOM.editVarsContainer);
-  DOM.editVars[1] = makeInput("Lifetime: ", lifetime, editVarsX, 0, false, DOM.editVarsContainer);
-  DOM.editVars[2] = makeInput("MutationRate: ", mutationRate, editVarsX, 0, false, DOM.editVarsContainer);
+  DOM.editVars[0] = makeInput("Population Size: ", populationSize, false, DOM.editVarsContainer);
+  DOM.editVars[1] = makeInput("Lifetime: ", lifetime, false, DOM.editVarsContainer);
+  DOM.editVars[2] = makeInput("MutationRate: ", mutationRate, false, DOM.editVarsContainer);
   DOM.editVars[2].inp.size(50);
   DOM.editVars[2].inp.attribute("step", 0.001);
+
+  DOM.speedInp = makeInput("Speed: ", 1, true);
+  DOM.speedInp.text.position(10, 140);
+  DOM.speedInp.text.style("font-size", "20px");
+  DOM.speedInp.inp.style("font-size", "15px");
+  DOM.speedInp.inp.attribute("step", 1);
+  DOM.speedInp.inp.input(() => {
+    DOM.speedInp.inp.value(int(DOM.speedInp.inp.value()));
+    speed = int(DOM.speedInp.inp.value());
+  });
 
   // randomSeed(99);
 }
@@ -159,6 +173,8 @@ function keyPressed() {
 
     DOM.editDoneButton.show();
     DOM.editVarsContainer.show();
+    DOM.editObstacle.show();
+    DOM.editSpawn.show();
   }
 }
 
@@ -219,11 +235,13 @@ function makeButton(txt, x, y, width, height, fontSize, hide, clicked) {
   return button;
 }
 
-function makeInput(name, val, x, y, hide, parent, type = "number") {
+function makeInput(name, val, hide, parent, type = "number") {
   let obj = {
-    text: createP(name).parent(parent), //.position(x, y),
+    text: createP(name), //.position(x, y),
     inp: createInput(val, type).size(40, text.height)
   }
+  if (parent) obj.text.parent(parent);
+
   obj.inp.parent(obj.text);
   if (hide) obj.text.hide();
 
