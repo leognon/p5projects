@@ -128,8 +128,9 @@ function setup() {
   DOM.speedInp.inp.style("font-size", "15px");
   DOM.speedInp.inp.attribute("step", 1);
   DOM.speedInp.inp.input(() => {
-    DOM.speedInp.inp.value(int(DOM.speedInp.inp.value()));
-    speed = int(DOM.speedInp.inp.value());
+    speed = max(1, int(DOM.speedInp.inp.value()));
+    DOM.speedInp.inp.value(0.01); //Remove the decimal
+    DOM.speedInp.inp.value(speed); //Remove the decimal
   });
 
   // randomSeed(99);
