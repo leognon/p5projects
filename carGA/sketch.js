@@ -45,7 +45,7 @@ let DOM = {
   editDoneButton: null,
   editSaveButton: null,
   editButton: null,
-  // editVarsContainer: null,
+  editVarsContainer: null,
   editVars: [],
   editObstacle: null,
   editSpawn: null,
@@ -56,7 +56,7 @@ let DOM = {
 function setup() {
   createCanvas(windowWidth, windowHeight).mousePressed(canvasClicked);
   reset();
-
+  createAllDOM();
 
   // randomSeed(99);
 }
