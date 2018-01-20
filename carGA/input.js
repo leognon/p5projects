@@ -51,6 +51,7 @@ function createEditDOM() {
     tool = 0;
     DOM.editObstacle.class("selected");
     DOM.editSpawn.class("");
+    DOM.editCheckpoint.class("");
   });
   DOM.editObstacle.class("selected");
 
@@ -58,12 +59,14 @@ function createEditDOM() {
     tool = 1;
     DOM.editSpawn.class("selected");
     DOM.editObstacle.class("");
+    DOM.editCheckpoint.class("");
   });
 
   DOM.editCheckpoint = makeButton("Checkpoint", 415, height - 61, 160, 56, 25, contain.editScreen, () => {
-    tool = 1;
-    DOM.editSpawn.class("selected");
+    tool = 2;
+    DOM.editSpawn.class("");
     DOM.editObstacle.class("");
+    DOM.editCheckpoint.class("selected");
   });
 
   DOM.editVarsContainer = createDiv("").position(10, 0).size(450, 100).parent(contain.editScreen);
@@ -80,14 +83,12 @@ function createSimulateDOM() {
     mode = 2;
 
     contain.startScreen.hide();
-    contain.editScreen.show();
+    contain.editScreen.show(); //TODO Fix edit button not clickable (change position fixes it!)
     contain.simulateScreen.hide();
   });
   DOM.speedInp = makeInput("Speed: ", 1, contain.simulateScreen);
-  DOM.speedInp.text.position(10, 140);
-  DOM.speedInp.text.style("font-size", "20px");
-  DOM.speedInp.inp.style("font-size", "15px");
-  DOM.speedInp.inp.attribute("step", 1);
+  DOM.speedInp.text.position(10, 140).style("font-size", "20px").size(150, 10);
+  DOM.speedInp.inp.style("font-size", "15px").attribute("step", 1);
   DOM.speedInp.inp.input(() => {
     speed = max(1, int(DOM.speedInp.inp.value()));
     DOM.speedInp.inp.value(0.01); //Remove the decimal
@@ -110,50 +111,64 @@ function keyPressed() {
 
 function canvasClicked(evt) {
   if (mode != 2) return;
+  switch (tool) {
+    case 0: //Start Drawing, place, or remove obstacles
+      if (evt.button === 0) {
+        if (drawingObstacle.drawing == false) { //Start drawing
+          drawingObstacle.x = mouseX;
+          drawingObstacle.y = mouseY;
+          drawingObstacle.drawing = true;
 
-  if (evt.button === 0 && tool === 0) { //Left clicked to draw obstacle
-    if (drawingObstacle.drawing == false) { //Start drawing
-      drawingObstacle.x = mouseX;
-      drawingObstacle.y = mouseY;
-      drawingObstacle.drawing = true;
+          //Hide DOM elements when drawing
+          contain.editScreen.hide();
+        } else { //Stop drawing and place obstacle
+          let width = mouseX - drawingObstacle.x;
+          let height = mouseY - drawingObstacle.y;
 
-      //Hide DOM elements when drawing
-      contain.editScreen.hide();
-      // DOM.editDoneButton.hide();
-      // DOM.editVarsContainer.hide();
-      // DOM.editObstacle.hide();
-      // DOM.editSpawn.hide();
+          if (width < 0) drawingObstacle.x += width;
+          if (height < 0) drawingObstacle.y += height;
+          height = max(3, abs(height));
+          width = max(3, abs(width));
 
-    } else { //Stop drawing and place obstacle
-      let width = mouseX - drawingObstacle.x;
-      let height = mouseY - drawingObstacle.y;
+          obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
+          drawingObstacle.drawing = false;
 
-      if (width < 0) drawingObstacle.x += width;
-      if (height < 0) drawingObstacle.y += height;
-      height = max(3, abs(height));
-      width = max(3, abs(width));
-
-      obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
-      drawingObstacle.drawing = false;
-
-      //Show DOM elements after drawing
-      contain.editScreen.show();
-      // DOM.editDoneButton.show();
-      // DOM.editVarsContainer.show();
-      // DOM.editObstacle.show();
-      // DOM.editSpawn.show();
-    }
-  } else if (evt.button === 0 && tool == 1) {
-    startX = mouseX;
-    startY = mouseY;
-  } else if (evt.button == 2 && !drawingObstacle.drawing) { //Right click to remove obstacle
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-      let obstacle = obstacles[i];
-      if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {
-        obstacles.splice(i, 1);
-        return;
+          //Show DOM elements after drawing
+          contain.editScreen.show();
+        }
+      } else if (evt.button == 2 && !drawingObstacle.drawing) { //Right click to remove obstacle
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          let obstacle = obstacles[i];
+          if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {
+            obstacles.splice(i, 1);
+            return;
+          }
+        }
       }
-    }
+      break;
+    case 1: //Set spawn
+      if (evt.button === 0) {
+        startX = mouseX;
+        startY = mouseY;
+      }
+      break;
+    case 2:
+      if (evt.button === 0) { //Place checkpoint
+        checkpoints.push(new Checkpoint(mouseX, mouseY, checkpoints.length));
+      } else if (evt.button == 2) { //Remove checkpoint
+        for (let i = 0; i < checkpoints.length; i++) {
+          let checkpoint = checkpoints[i];
+          if (pow(mouseX - checkpoint.pos.x, 2) + pow(mouseY - checkpoint.pos.y, 2) < pow(checkpoint.r, 2)) {
+            checkpoints.splice(i, 1);
+            for (let j = i; j < checkpoints.length; j++) {
+              checkpoints[j].i--;
+            }
+            return;
+          }
+        }
+      }
+    default:
+      break;
   }
 }
 

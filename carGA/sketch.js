@@ -27,6 +27,8 @@ let generation = 0;
 let speed = 1;
 let tool = 0;
 
+let checkpoints = [];
+
 let drawingObstacle = {
   drawing: false,
   x: 0,
@@ -36,8 +38,7 @@ let drawingObstacle = {
 let contain = {
   startScreen: null,
   editScreen: null,
-  simulateScreen: null,
-  editVars: null
+  simulateScreen: null
 }
 
 let DOM = {

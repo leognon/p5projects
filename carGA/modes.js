@@ -94,6 +94,10 @@ function editMode() {
   for (let obstacle of obstacles) {
     obstacle.show();
   }
+  for (let i = checkpoints.length - 1; i >= 0; i--) {
+    checkpoint.show();
+  }
+
   for (let car of deadCars) {
     car.show();
   }
