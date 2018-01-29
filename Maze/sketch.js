@@ -30,6 +30,7 @@ var gen = 0;
 
 function setup() {
 	createCanvas(window.innerWidth, windowHeight);
+	timerInterval = setInterval(timer, 1000);
 	reset();
 }
 
@@ -108,7 +109,6 @@ function timer() {
 		} else {
 			console.log(time)
 			time--;
-			timerInterval = setTimeout(timer, 1000);
 		}
 	}
 }
