@@ -19,6 +19,7 @@ var h = window.innerHeight / ((level * 2.5) + 10); //CHANGE TO 10
 var grid = [];
 var current;
 var time;
+var timerInterval;
 var play = false;
 player = {
 	loc: grid[0],
@@ -107,7 +108,7 @@ function timer() {
 		} else {
 			console.log(time)
 			time--;
-			setTimeout(timer, 1000);
+			timerInterval = setTimeout(timer, 1000);
 		}
 	}
 }
