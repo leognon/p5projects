@@ -20,6 +20,11 @@ function createStartDOM() {
 
 function createEditDOM() {
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, contain.editScreen, () => { //Finish editing, goes to simulation
+    if (checkpoints.length <= 1) {
+      alert("You must have at least one checkpoint of where the cars goal is to go!");
+      return;
+    }
+
     if (time === 0 && generation === 0) {
       for (let car of cars) {
         car.pos.x = startX;
@@ -36,6 +41,10 @@ function createEditDOM() {
     }
 
     populationSize = int(DOM.editVars[0].inp.value());
+    if (cars.length > populationSize) {
+      cars.splice(populationSize, cars.length - populationSize);
+    }
+
     lifetime = int(DOM.editVars[1].inp.value());
     mutationRate = parseFloat(DOM.editVars[2].inp.value());
 
@@ -102,73 +111,74 @@ function keyPressed() {
   } else if (keyCode == ESCAPE && drawingObstacle.drawing) {
     drawingObstacle.drawing = false;
 
-    DOM.editDoneButton.show();
-    DOM.editVarsContainer.show();
-    DOM.editObstacle.show();
-    DOM.editSpawn.show();
+    contain.editScreen.show();
   }
 }
 
 function canvasClicked(evt) {
   if (mode != 2) return;
-  switch (tool) {
-    case 0: //Start Drawing, place, or remove obstacles
-      if (evt.button === 0) {
-        if (drawingObstacle.drawing == false) { //Start drawing
-          drawingObstacle.x = mouseX;
-          drawingObstacle.y = mouseY;
-          drawingObstacle.drawing = true;
 
-          //Hide DOM elements when drawing
-          contain.editScreen.hide();
-        } else { //Stop drawing and place obstacle
-          let width = mouseX - drawingObstacle.x;
-          let height = mouseY - drawingObstacle.y;
+  if (evt.button === 0) { //Left click
+    switch (tool) {
+      case 0: //Start Drawing, place, or remove obstacles
+        if (evt.button === 0) {
+          if (drawingObstacle.drawing == false) { //Start drawing
+            drawingObstacle.x = mouseX;
+            drawingObstacle.y = mouseY;
+            drawingObstacle.drawing = true;
 
-          if (width < 0) drawingObstacle.x += width;
-          if (height < 0) drawingObstacle.y += height;
-          height = max(3, abs(height));
-          width = max(3, abs(width));
+            //Hide DOM elements when drawing
+            contain.editScreen.hide();
+          } else { //Stop drawing and place obstacle
+            let width = mouseX - drawingObstacle.x;
+            let height = mouseY - drawingObstacle.y;
 
-          obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
-          drawingObstacle.drawing = false;
+            if (width < 0) drawingObstacle.x += width;
+            if (height < 0) drawingObstacle.y += height;
+            height = max(3, abs(height));
+            width = max(3, abs(width));
 
-          //Show DOM elements after drawing
-          contain.editScreen.show();
-        }
-      } else if (evt.button == 2 && !drawingObstacle.drawing) { //Right click to remove obstacle
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-          let obstacle = obstacles[i];
-          if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {
-            obstacles.splice(i, 1);
-            return;
+            obstacles.push(new Obstacle(drawingObstacle.x, drawingObstacle.y, width, height));
+            drawingObstacle.drawing = false;
+
+            //Show DOM elements after drawing
+            contain.editScreen.show();
           }
         }
-      }
-      break;
-    case 1: //Set spawn
-      if (evt.button === 0) {
-        startX = mouseX;
-        startY = mouseY;
-      }
-      break;
-    case 2:
-      if (evt.button === 0) { //Place checkpoint
-        checkpoints.push(new Checkpoint(mouseX, mouseY, checkpoints.length));
-      } else if (evt.button == 2) { //Remove checkpoint
-        for (let i = 0; i < checkpoints.length; i++) {
-          let checkpoint = checkpoints[i];
-          if (pow(mouseX - checkpoint.pos.x, 2) + pow(mouseY - checkpoint.pos.y, 2) < pow(checkpoint.r, 2)) {
-            checkpoints.splice(i, 1);
-            for (let j = i; j < checkpoints.length; j++) {
-              checkpoints[j].i--;
-            }
-            return;
-          }
+        break;
+      case 1: //Set spawn
+        if (evt.button === 0) {
+          startX = mouseX;
+          startY = mouseY;
         }
+        break;
+      case 2: //Place or remove checkpoints
+        if (evt.button === 0) { //Place checkpoint
+          checkpoints.push(new Checkpoint(mouseX, mouseY, checkpoints.length));
+        }
+      default:
+        break;
+    }
+  } else if (evt.button == 2) { //Right click
+    if (drawingObstacle.drawing) return; //Right click to remove obstacle
+    for (let i = obstacles.length - 1; i >= 0; i--) { //Remove obstacles
+      let obstacle = obstacles[i];
+      if (mouseX > obstacle.pos.x && mouseX < obstacle.pos.x + obstacle.width && mouseY > obstacle.pos.y && mouseY < obstacle.pos.y + obstacle.height) {
+        obstacles.splice(i, 1);
+        return;
       }
-    default:
-      break;
+    }
+
+    for (let i = 0; i < checkpoints.length; i++) { //Remove checkpoints
+      let checkpoint = checkpoints[i];
+      if (pow(mouseX - checkpoint.pos.x, 2) + pow(mouseY - checkpoint.pos.y, 2) < pow(checkpoint.r, 2)) {
+        checkpoints.splice(i, 1);
+        for (let j = i; j < checkpoints.length; j++) {
+          checkpoints[j].i--;
+        }
+        return;
+      }
+    }
   }
 }
 
