@@ -1,5 +1,4 @@
 function simulate() {
-
   for (let i = 0; i < speed; i++) {
     if (time < lifetime && cars.length > 0) {
       run(); //Run the simulation
@@ -88,7 +87,6 @@ function run() {
 }
 
 function displaySimulation() {
-
   for (let car of deadCars) {
     car.show();
   }

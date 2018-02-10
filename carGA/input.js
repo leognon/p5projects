@@ -118,6 +118,63 @@ function keyPressed() {
   }
 }
 
+function saveAll() {
+  let data = {
+    mutationRate: mutationRate,
+    populationSize: populationSize,
+    lifetime: lifetime,
+    startX: startX,
+    startY: startY,
+    generation: generation,
+    obstacles: [],
+    checkpoints: [],
+    carGenes: []
+  };
+
+  for (let obstacle of obstacles) {
+    let o = {
+      pos: saveVec(obstacle.pos),
+      w: obstacle.width,
+      h: obstacle.height
+    };
+    data.obstacles.push(o);
+  }
+  for (let checkpoint of checkpoints) {
+    let c = {
+      pos: saveVec(checkpoint.pos),
+      index: checkpoint.index
+    };
+    data.checkpoints.push(c);
+  }
+  for (let car of cars) {
+    let c = {
+      accs: [],
+      maxSpeed: car.genes.maxSpeed,
+      accRate: car.genes.accRate,
+      width: car.genes.width,
+      height: car.genes.width
+    };
+    for (let acc of car.genes.accs) {
+      c.accs.push(saveVec(acc));
+    }
+    data.carGenes.push(c);
+  }
+
+  saveJSON(data, 'carGA.json');
+  return data;
+}
+
+function loadAll() {
+  //TODO Make a load function
+}
+
+function saveVec(v) {
+  return {
+    x: v.x,
+    y: v.y
+  };
+}
+
 function canvasClicked(evt) {
   if (mode != 2) return;
 
