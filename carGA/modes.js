@@ -9,9 +9,10 @@ function simulate() {
 
       let sumFit = 0;
       for (car of cars) {
-        let fitness = max(1, car.pos.x); //Better to go to the right
-        car.fitness = ((fitness * fitness) / 10000) * (!car.dead) ? 1.5 : 1; //Evalute the fitness
-        sumFit += car.fitness;
+        //let fitness = calcFitness(car); //max(1, car.pos.x); //Better to go to the right
+        car.fitness = calcFitness(car);
+        // car.fitness = ((fitness * fitness) / 10000) * (!car.dead) ? 1.5 : 1; //Evalute the fitness
+        sumFit += car.fitness; //TODO Figure out why freezing and use CAR.FITNESS!!!!!!!! FOR THE FITNESS!!!
       }
       for (car of cars) {
         car.prob = (car.fitness / sumFit);
@@ -46,13 +47,32 @@ function simulate() {
     }
   }
   background(220);
-  displaySimulation();
+  if (render) {
+    displaySimulation();
+  }
+}
+
+function calcFitness(car) {
+  let fitness;
+  let checkPointBonus = car.checkpointsReached * 1500; //1500 for every checkpoint reached
+  let distBonus = 0;
+
+  if (car.checkpointsReached < checkpoints.length) { //Did not finish
+    distBonus = 500 - p5.Vector.dist(car.pos, checkpoints[checkpoints.length - 1].pos); //500 - dist from checkopint
+  } else { //Finished
+    checkPointBonus *= 2; //2 Times bonus
+  }
+  fitness = checkPointBonus + distBonus;
+  if (car.dead) fitness /= 2;
+
+  // console.log(fitness);
+  return fitness;
 }
 
 function run() {
   for (let i = cars.length - 1; i >= 0; i--) {
     let car = cars[i];
-    if (car.dead == false && (!paused)) {
+    if (car.dead == false && car.checkpointsReached < checkpoints.length && (!paused)) {
       car.move();
       car.hit();
     }
@@ -77,6 +97,10 @@ function displaySimulation() {
     car.show();
   }
 
+  for (let checkpoint of checkpoints) {
+    checkpoint.show();
+  }
+
   for (let obstacle of obstacles) {
     obstacle.show();
   }
@@ -84,26 +108,28 @@ function displaySimulation() {
   fill(0);
   noStroke();
   textSize(20);
-  textAlign(LEFT);
+  textAlign(LEFT, BASELINE);
   let txt = "Generation: " + generation + "\nFrames left: " + (lifetime - time) + "\nAlive: " + cars.length + " Dead: " + deadCars.length + "\nFrameRate: " + nf(frameRate(), 2, 1) + "\nPopulation Size: " + populationSize + "\nMutation Rate: " + mutationRate;
   text(txt, 10, 25);
 }
 
 function editMode() {
   background(220);
-  for (let obstacle of obstacles) {
-    obstacle.show();
-  }
-  for (let i = checkpoints.length - 1; i >= 0; i--) {
-    checkpoint.show();
-  }
-
   for (let car of deadCars) {
     car.show();
   }
   for (let car of cars) {
     car.show();
   }
+
+  for (let obstacle of obstacles) {
+    obstacle.show();
+  }
+  for (let i = checkpoints.length - 1; i >= 0; i--) {
+    checkpoints[i].show();
+  }
+
+
 
   fill(84, 212, 255);
   noStroke();

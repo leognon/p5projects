@@ -26,6 +26,7 @@ let obstacles = [];
 let generation = 0;
 let speed = 1;
 let tool = 0;
+let render = true;
 
 let checkpoints = [];
 
@@ -83,6 +84,7 @@ function reset() {
   for (let i = 0; i < populationSize; i++) { //Create the initial population
     cars.push(new Car());
   }
+
   deadCars = [];
   nextGen = [];
   paused = false;

@@ -5,6 +5,7 @@ class Car {
     this.dead = false;
     this.prob;
     this.fitness;
+    this.checkpointsReached = 0;
 
     this.genes = genes; //Genes (acc force for each frame, maxSpeed, accRate, width, and height)
     this.halfDim = createVector(this.genes.width / 2, this.genes.height / 2);
@@ -34,30 +35,44 @@ class Car {
       if (a === 0) { //Facing up or down
         if (collideRect(obstacle.pos, obstacle.width, obstacle.height, p5.Vector.sub(this.pos, this.halfDim), this.genes.width, this.genes.height)) {
           this.dead = true;
+          return;
         }
       } else if (a == HALF_PI) { //Facing left or right
         if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x - this.halfDim.y, this.pos.y - this.halfDim.x), this.genes.height, this.genes.width)) {
           this.dead = true;
+          return;
         }
       } else if (a == QUARTER_PI) { //Facing 45 or 225 degrees
         let theW = this.genes.height * abs(sin(heading)) + this.genes.width * abs(cos(heading));
         let theH = this.genes.height * abs(cos(heading)) + this.genes.width * abs(sin(heading))
         if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(-theW / 2 + this.pos.x, this.pos.y), theW / 2, theH / 2)) {
           this.dead = true;
+          return;
         } else if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x, -theH / 2 + this.pos.y), theW / 2, theH / 2)) {
           this.dead = true;
+          return;
         }
       } else if (a == QUARTER_PI * 3) { //Facing 135 or 315 degrees
         let theW = this.genes.height * abs(sin(heading)) + this.genes.width * abs(cos(heading));
         let theH = this.genes.height * abs(cos(heading)) + this.genes.width * abs(sin(heading));
         if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(this.pos.x, this.pos.y), theW / 2, theH / 2)) {
           this.dead = true;
+          return;
         } else if (collideRect(obstacle.pos, obstacle.width, obstacle.height, createVector(-theW / 2 + this.pos.x, -theH / 2 + this.pos.y), theW / 2, theH / 2)) {
           this.dead = true;
+          return;
         }
       } else {
         console.log("ANGLE WAS AN INVALID VALUE: " + a);
       }
+    }
+
+
+    let index = constrain(this.checkpointsReached, 0, checkpoints.length - 1);
+    let checkpoint = checkpoints[index];
+
+    if (pow(this.pos.x - checkpoint.pos.x, 2) + pow(this.pos.y - checkpoint.pos.y, 2) < pow(this.genes.width + checkpoint.r, 2)) {
+      this.checkpointsReached++;
     }
   }
 
@@ -65,7 +80,7 @@ class Car {
     push();
     translate(this.pos.x, this.pos.y); //Translate to center
     rotate(this.vel.heading() + HALF_PI); //Rotate towards direction
-    fill(50, 230); //Greyish color
+    fill(50 * this.checkpointsReached, 230); //Greyish color
     noStroke();
     rect(-this.genes.width / 2, -this.genes.height / 2, this.genes.width, this.genes.height); //Draw rect
     pop();

@@ -20,7 +20,7 @@ function createStartDOM() {
 
 function createEditDOM() {
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, contain.editScreen, () => { //Finish editing, goes to simulation
-    if (checkpoints.length <= 1) {
+    if (checkpoints.length < 1) {
       alert("You must have at least one checkpoint of where the cars goal is to go!");
       return;
     }
@@ -78,12 +78,12 @@ function createEditDOM() {
     DOM.editCheckpoint.class("selected");
   });
 
-  DOM.editVarsContainer = createDiv("").position(10, 0).size(450, 100).parent(contain.editScreen);
+  DOM.editVarsContainer = createDiv("").position(10, 0).size(160, 100).parent(contain.editScreen);
 
   DOM.editVars[0] = makeInput("Population Size: ", populationSize, DOM.editVarsContainer);
   DOM.editVars[1] = makeInput("Lifetime: ", lifetime, DOM.editVarsContainer);
   DOM.editVars[2] = makeInput("MutationRate: ", mutationRate, DOM.editVarsContainer);
-  DOM.editVars[2].inp.size(50);
+  DOM.editVars[2].inp.size(57);
   DOM.editVars[2].inp.attribute("step", 0.001);
 }
 
@@ -98,10 +98,13 @@ function createSimulateDOM() {
   DOM.speedInp = makeInput("Speed: ", 1, contain.simulateScreen);
   DOM.speedInp.text.position(10, 140).style("font-size", "20px").size(150, 10);
   DOM.speedInp.inp.style("font-size", "15px").attribute("step", 1);
-  DOM.speedInp.inp.input(() => {
+  DOM.speedInp.inp.changed(() => {
     speed = max(1, int(DOM.speedInp.inp.value()));
     DOM.speedInp.inp.value(0.01); //Remove the decimal
     DOM.speedInp.inp.value(speed); //Remove the decimal
+  });
+  DOM.speedInp.inp.input(() => {
+    speed = max(1, int(DOM.speedInp.inp.value()));
   });
 }
 
