@@ -52,7 +52,9 @@ let DOM = {
   editObstacle: null,
   editSpawn: null,
   editCheckpoint: null,
-  speedInp: null
+  speedInp: null,
+  loadButton: null,
+  saveButton: null
 }
 
 function setup() {

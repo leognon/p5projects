@@ -18,6 +18,7 @@ function createStartDOM() {
   });
 }
 
+
 function createEditDOM() {
   DOM.editDoneButton = makeButton("DONE", 15, height - 61, 100, 56, 25, contain.editScreen, () => { //Finish editing, goes to simulation
     if (checkpoints.length < 1) {
@@ -56,7 +57,7 @@ function createEditDOM() {
     contain.simulateScreen.show();
   });
 
-  DOM.editObstacle = makeButton("Obstacle", 125, height - 61, 110, 56, 25, contain.editScreen, () => {
+  DOM.editObstacle = makeButton("Obstacle", 125, height - 61, 120, 56, 25, contain.editScreen, () => {
     tool = 0;
     DOM.editObstacle.class("selected");
     DOM.editSpawn.class("");
@@ -64,18 +65,50 @@ function createEditDOM() {
   });
   DOM.editObstacle.class("selected");
 
-  DOM.editSpawn = makeButton("SpawnPoint", 245, height - 61, 160, 56, 25, contain.editScreen, () => {
+  DOM.editSpawn = makeButton("SpawnPoint", 255, height - 61, 160, 56, 25, contain.editScreen, () => {
     tool = 1;
     DOM.editSpawn.class("selected");
     DOM.editObstacle.class("");
     DOM.editCheckpoint.class("");
   });
 
-  DOM.editCheckpoint = makeButton("Checkpoint", 415, height - 61, 160, 56, 25, contain.editScreen, () => {
+  DOM.editCheckpoint = makeButton("Checkpoint", 425, height - 61, 160, 56, 25, contain.editScreen, () => {
     tool = 2;
     DOM.editSpawn.class("");
     DOM.editObstacle.class("");
     DOM.editCheckpoint.class("selected");
+  });
+
+  DOM.loadButton = makeButton("Load File", 595, height - 61, 160, 56, 25, contain.editScreen, () => {
+    document.getElementById('fileInput').click();
+    document.getElementById('fileInput').onchange = function (event) {
+      var fileList = document.getElementById('fileInput').files;
+      console.log(fileList);
+      let fr = new FileReader();
+      fr.onload = function (e) {
+        let loadedData = JSON.parse(e.target.result);
+        loadAll(loadedData);
+      };
+      fr.readAsText(fileList[0]);
+    }
+  });
+  DOM.loadButton.drop((data) => {
+    let fr = new FileReader();
+    fr.onload = function (e) {
+      let loadedData = JSON.parse(e.target.result);
+      loadAll(loadedData);
+    };
+    fr.readAsText(data.file);
+
+  });
+
+  DOM.saveButton = makeButton("Save", 765, height - 61, 160, 56, 25, contain.editScreen, () => {
+    saveAll();
+    //TODO DONE!??!!??!?!?!!?!??!?!?
+    //TODO MAKE COLOR PROPORTIOINAL TO AMT OF CHECKPOINTS!
+    //Are you sure you want to quit?
+    //Directions on start
+    //Exit Button?
   });
 
   DOM.editVarsContainer = createDiv("").position(10, 0).size(160, 100).parent(contain.editScreen);
@@ -85,6 +118,7 @@ function createEditDOM() {
   DOM.editVars[2] = makeInput("MutationRate: ", mutationRate, DOM.editVarsContainer);
   DOM.editVars[2].inp.size(57);
   DOM.editVars[2].inp.attribute("step", 0.001);
+
 }
 
 function createSimulateDOM() {
@@ -92,7 +126,7 @@ function createSimulateDOM() {
     mode = 2;
 
     contain.startScreen.hide();
-    contain.editScreen.show(); //TODO Fix edit button not clickable (change position fixes it!)
+    contain.editScreen.show();
     contain.simulateScreen.hide();
   });
   DOM.speedInp = makeInput("Speed: ", 1, contain.simulateScreen);
@@ -137,13 +171,15 @@ function saveAll() {
       w: obstacle.width,
       h: obstacle.height
     };
+
     data.obstacles.push(o);
   }
   for (let checkpoint of checkpoints) {
     let c = {
       pos: saveVec(checkpoint.pos),
-      index: checkpoint.index
+      index: checkpoint.i
     };
+
     data.checkpoints.push(c);
   }
   for (let car of cars) {
@@ -164,8 +200,45 @@ function saveAll() {
   return data;
 }
 
-function loadAll() {
-  //TODO Make a load function
+function loadAll(data) {
+  mutationRate = data.mutationRate;
+  populationSize = data.populationSize;
+  lifetime = data.lifetime;
+  DOM.editVars[0].inp.value(populationSize); //= makeInput("Population Size: ", populationSize, DOM.editVarsContainer);
+  DOM.editVars[1].inp.value(lifetime); // = makeInput("Lifetime: ", lifetime, DOM.editVarsContainer);
+  DOM.editVars[2].inp.value(mutationRate); //= makeInput("MutationRate: ", mutationRate, DOM.editVarsContainer);
+
+  startX = data.startX;
+  startY = data.startY;
+  generation = data.generation;
+
+  obstacles = [];
+  checkpoints = [];
+  carGenes = [];
+
+  for (let obstacle of data.obstacles) {
+    let o = new Obstacle(obstacle.pos.x, obstacle.pos.y, obstacle.w, obstacle.h);
+    obstacles.push(o);
+  }
+
+  for (let checkpoint of data.checkpoints) {
+    checkpoints.push(new Checkpoint(checkpoint.pos.x, checkpoint.pos.y, checkpoint.index));
+  }
+
+  for (let carGene of data.carGenes) {
+    let genes = {
+      accs: [],
+      maxSpeed: carGene.maxSpeed, //car.genes.maxSpeed,
+      accRate: carGene.accRate,
+      width: carGene.width,
+      height: carGene.height
+    };
+    for (let acc of carGene.accs) {
+      genes.accs.push(createVector(acc.x, acc.y));
+    }
+    let c = new Car(startX, startY, genes);
+    cars.push(c);
+  }
 }
 
 function saveVec(v) {

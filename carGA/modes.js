@@ -8,10 +8,8 @@ function simulate() {
 
       let sumFit = 0;
       for (car of cars) {
-        //let fitness = calcFitness(car); //max(1, car.pos.x); //Better to go to the right
         car.fitness = calcFitness(car);
-        // car.fitness = ((fitness * fitness) / 10000) * (!car.dead) ? 1.5 : 1; //Evalute the fitness
-        sumFit += car.fitness; //TODO Figure out why freezing and use CAR.FITNESS!!!!!!!! FOR THE FITNESS!!!
+        sumFit += car.fitness;
       }
       for (car of cars) {
         car.prob = (car.fitness / sumFit);
