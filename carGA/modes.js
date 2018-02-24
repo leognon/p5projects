@@ -107,6 +107,14 @@ function displaySimulation() {
   textAlign(LEFT, BASELINE);
   let txt = "Generation: " + generation + "\nFrames left: " + (lifetime - time) + "\nAlive: " + cars.length + " Dead: " + deadCars.length + "\nFrameRate: " + nf(frameRate(), 2, 1) + "\nPopulation Size: " + populationSize + "\nMutation Rate: " + mutationRate;
   text(txt, 10, 25);
+
+  if (paused) {
+    fill(255, 0, 0);
+    noStroke();
+    textSize(15);
+    let msg = "Paused. Press P to resume";
+    text(msg, width - textWidth(msg) - 5, 20);
+  }
 }
 
 function editMode() {
