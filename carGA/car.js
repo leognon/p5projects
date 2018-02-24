@@ -2,6 +2,8 @@ class Car {
   constructor(x = startX, y = startY, genes = randGenes()) {
     this.pos = createVector(x, y); //Position
     this.vel = createVector(0, 0); //Velocity
+    this.colG = 0;
+    this.colRB = 0;
     this.dead = false;
     this.prob;
     this.fitness;
@@ -73,6 +75,8 @@ class Car {
 
     if (pow(this.pos.x - checkpoint.pos.x, 2) + pow(this.pos.y - checkpoint.pos.y, 2) < pow(this.genes.width + checkpoint.r, 2)) {
       this.checkpointsReached++;
+      this.colG = (this.checkpointsReached / checkpoints.length) * 255;
+      this.colRB = this.colG * 0.8;
     }
   }
 
@@ -80,7 +84,7 @@ class Car {
     push();
     translate(this.pos.x, this.pos.y); //Translate to center
     rotate(this.vel.heading() + HALF_PI); //Rotate towards direction
-    fill(50 * this.checkpointsReached, 230); //Greyish color
+    fill(this.colRB, this.colG, this.colRB, 230); //Start Black, eventually turn green
     noStroke();
     rect(-this.genes.width / 2, -this.genes.height / 2, this.genes.width, this.genes.height); //Draw rect
     pop();
