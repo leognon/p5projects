@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    button {
+      cursor: pointer;
+      outline: none;
+      background-color: white;
+      border: none;
+      -webkit-transition: background-color 500ms;
+      /* For Safari 3.1 to 6.0 */
+      animation-duration: background-color 500ms;
+    }
+
+    button:hover {
+      background-color: rgb(235, 235, 235);
+    }
+
+    .selected {
+      background-color: rgb(235, 235, 235);
+      border: 3px solid black;
+    }
+
+    canvas {
+      vertical-align: top;
+    }
+
+    * {
+      -webkit-touch-callout: none;
+      /* iOS Safari */
+      -webkit-user-select: none;
+      /* Safari */
+      -khtml-user-select: none;
+      /* Konqueror HTML */
+      -moz-user-select: none;
+      /* Firefox */
+      -ms-user-select: none;
+      /* Internet Explorer/Edge */
+      user-select: none;
+      /* Non-prefixed version, currently supported by Chrome and Opera */
+    }
+  </style>
+  <input id="fileInput" type="file" style="display:none;" />
+
+  <script src="addons/p5.min.js"></script>
+  <script src="addons/p5.dom.min.js"></script>
+  <!-- <script src="addons/p5.sound.min.js"></script> -->
+  <script src="sketch.js"></script>
+  <script src="car.js"></script>
+  <script src="obstacle.js"></script>
+  <script src="modes.js"></script>
+  <script src="checkpoint.js"></script>
+  <script src="input.js"></script>
+</head>
+
+<body oncontextmenu="return false;">
+</body>
+
+</html>
