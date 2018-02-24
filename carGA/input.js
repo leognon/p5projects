@@ -105,10 +105,6 @@ function createEditDOM() {
   DOM.saveButton = makeButton("Save", 765, height - 61, 160, 56, 25, contain.editScreen, () => {
     saveAll();
     //TODO DONE!??!!??!?!?!!?!??!?!?
-    //TODO MAKE COLOR PROPORTIOINAL TO AMT OF CHECKPOINTS!
-    //Are you sure you want to quit?
-    //Directions on start
-    //Exit Button?
   });
 
   DOM.editVarsContainer = createDiv("").position(10, 0).size(160, 100).parent(contain.editScreen);
@@ -149,6 +145,9 @@ function keyPressed() {
     drawingObstacle.drawing = false;
 
     contain.editScreen.show();
+  } else if (key == 'H') {
+    let msg = "In this Genetic Algorithm, the cars (rectangles), are learning how to reach the checkpoints (green circles) in the correct order. They must also avoid the obstacles (gray rectangles). If they hit an obstacle, they crash and loose. \n\nTo place obstacles, go into edit mode, select obstacle and click for a starting point, then click for the ending point. To place checkpoints, place them in the order that you want the cars to reach them.\n\nYou can go back and edit the course, and any of the algorithms variables.\nPopulation Size - The amount of Cars\nLifetime - How many frames each car has to reach all the checkpoints.\nMutation rate - The percent chance that a cars gene with mutate to a random value\n\nThe cars genes consist of what vector will be applied as an acceleration each frame, the maximum speed of the car, the acceleration rate, the width and the height.\n\nControls:\nPause - P\n   Cancel placing obstacle - Right Click\nRemove obstacle/checkpoint - Right Click\nHelp - H";
+    alert(msg);
   }
 }
 
