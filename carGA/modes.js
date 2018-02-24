@@ -146,4 +146,6 @@ function startScreen() {
   textSize(50);
   textAlign(CENTER);
   text("Evolving Car Genetic Algorithm", width / 2, 75);
+  textSize(25);
+  text("Press H for help", width / 2, 175);
 }
