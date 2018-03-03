@@ -1,17 +1,17 @@
-const pixelWidth = 10;
+const pixelWidth = 5;
 const WHITE = 0;
 const BLACK = 1;
 const UP = 0;
 const RIGHT = 1;
 const DOWN = 2;
 const LEFT = 3;
+const amountOfAnts = 3;
 
 let drawPixels = true;
 let grid = [];
-let speed = 500;
-let antX;
-let antY;
-let antDir = UP;
+let speed = 1;
+
+let ants = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -28,61 +28,27 @@ function setup() {
 
   antX = halfPixelsWidth;
   antY = halfPixelsHeight;
-  grid[halfPixelsWidth][halfPixelsHeight] = BLACK;
-}
+  // grid[halfPixelsWidth][halfPixelsHeight] = BLACK;
 
+  for (let i = 0; i < amountOfAnts; i++) {
+    ants.push(new Ant(floor(random(grid.length)), floor(random(grid[0].length)), UP));
+  }
+}
 
 function draw() {
   for (let i = 0; i < speed; i++) {
-    runAnt();
+    runAnts();
   }
   if (drawPixels) {
     show();
   }
 }
 
-function runAnt() {
-  setDir();
-  move();
-}
-
-function setDir() {
-  if (grid[antX][antY] === WHITE) {
-    //Turn right
-    antDir++;
-  } else {
-    //Turn left
-    antDir += 3;
+function runAnts() {
+  for (let ant of ants) {
+    ant.setDir();
+    ant.move();
   }
-  grid[antX][antY] = int(!grid[antX][antY]); //Flip the tile (black -> white, white -> black)
-
-  antDir = (antDir + 4) % 4;
-}
-
-function mousePressed() {
-  drawPixels = !drawPixels;
-  console.log("STOPPED DRAWING! CLICK AGAIN TO CONTINUE");
-}
-
-function move() {
-  switch (antDir) {
-    case UP:
-      antY--;
-      break;
-    case DOWN:
-      antY++;
-      break;
-    case LEFT:
-      antX--;
-      break;
-    case RIGHT:
-      antX++;
-      break;
-    default:
-      break;
-  }
-  antX = (antX + grid.length) % grid.length; //Wrap around walls
-  antY = (antY + grid[0].length) % grid[0].length; //Wrap around walls
 }
 
 function show() {
@@ -95,4 +61,51 @@ function show() {
       }
     }
   }
+}
+
+class Ant {
+  constructor(x, y, dir) {
+    this.x = x;
+    this.y = y;
+    this.dir = dir;
+  }
+
+  setDir() {
+    if (grid[this.x][this.y] === WHITE) {
+      //Turn right
+      this.dir++;
+    } else {
+      //Turn left
+      this.dir += 3;
+    }
+    grid[this.x][this.y] = int(!grid[this.x][this.y]); //Flip the tile (black -> white, white -> black)
+
+    this.dir = (this.dir + 4) % 4;
+  }
+
+  move() {
+    switch (this.dir) {
+      case UP:
+        this.y--;
+        break;
+      case DOWN:
+        this.y++;
+        break;
+      case LEFT:
+        this.x--;
+        break;
+      case RIGHT:
+        this.x++;
+        break;
+      default:
+        break;
+    }
+    this.x = (this.x + grid.length) % grid.length; //Wrap around walls
+    this.y = (this.y + grid[0].length) % grid[0].length; //Wrap around walls
+  }
+}
+
+function mousePressed() {
+  drawPixels = !drawPixels;
+  console.log("STOPPED DRAWING! CLICK AGAIN TO CONTINUE");
 }
