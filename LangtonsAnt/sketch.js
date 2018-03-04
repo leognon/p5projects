@@ -113,6 +113,22 @@ class Ant {
   }
 }
 
+function keyPressed() {
+  if (key == 'S') {
+    speed = prompt("What would you like to set the speed of the simulation to?");
+  } else if (key == 'A') {
+    let amt = prompt("How many ants would you like to add? Use a negative to remove ants", 1);
+    console.log(amt);
+    if (amt > 0) {
+      for (let i = 0; i < amt; i++) {
+        ants.push(new Ant(floor(random(grid.length)), floor(random(grid[0].length))));
+      }
+    } else if (amt < 0) {
+      ants.splice(ants.length - abs(amt), ants.length);
+    }
+  }
+}
+
 function mousePressed() {
   drawPixels = !drawPixels;
   console.log("STOPPED DRAWING! CLICK AGAIN TO CONTINUE");
