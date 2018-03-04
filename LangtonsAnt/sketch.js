@@ -31,7 +31,7 @@ function setup() {
   // grid[halfPixelsWidth][halfPixelsHeight] = BLACK;
 
   for (let i = 0; i < amountOfAnts; i++) {
-    ants.push(new Ant(floor(random(grid.length)), floor(random(grid[0].length)), UP));
+    ants.push(new Ant(floor(random(grid.length)), floor(random(grid[0].length))));
   }
 }
 
@@ -41,6 +41,14 @@ function draw() {
   }
   if (drawPixels) {
     show();
+  } else {
+    fill(255);
+    noStroke();
+    textSize(15);
+    let txt = "STOPPED RENDERING! CLICK AGAIN TO RESUME";
+    rect(0, 0, textWidth(txt) + 10, 20);
+    fill(255, 0, 0);
+    text(txt, 5, 15)
   }
 }
 
@@ -64,7 +72,7 @@ function show() {
 }
 
 class Ant {
-  constructor(x, y, dir) {
+  constructor(x, y, dir = UP) {
     this.x = x;
     this.y = y;
     this.dir = dir;
