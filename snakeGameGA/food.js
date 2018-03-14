@@ -22,7 +22,6 @@ function randFoodPos(s) {
       for (let p of s.hist) {
         if (x == p.x && y == p.y) {
           insideSnake = true;
-          return;
         }
       }
     }

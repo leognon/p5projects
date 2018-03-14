@@ -29,8 +29,8 @@ class Snake {
 
   eat(f) {
     if (this.pos.x == food.pos.x && this.pos.y == food.pos.y) {
-      this.len++; //TODO Fix food pos being undefined
-      food.pos = randFoodPos(snake);
+      this.len++;
+      food.pos = randFoodPos(this);
     }
   }
 
