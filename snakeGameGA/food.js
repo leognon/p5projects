@@ -1,5 +1,5 @@
 class Food {
-  constructor(pos = randFoodPos(snake)) {
+  constructor(pos = randFoodPos(snakes[0])) {
     this.pos = pos.copy();
   }
 
