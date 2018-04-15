@@ -187,7 +187,7 @@ function saveAll() {
       maxSpeed: car.genes.maxSpeed,
       accRate: car.genes.accRate,
       width: car.genes.width,
-      height: car.genes.width
+      height: car.genes.height
     };
     for (let acc of car.genes.accs) {
       c.accs.push(saveVec(acc));
@@ -213,7 +213,7 @@ function loadAll(data) {
 
   obstacles = [];
   checkpoints = [];
-  carGenes = [];
+  cars = [];
 
   for (let obstacle of data.obstacles) {
     let o = new Obstacle(obstacle.pos.x, obstacle.pos.y, obstacle.w, obstacle.h);
