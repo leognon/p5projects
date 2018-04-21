@@ -55,7 +55,9 @@ function calcFitness(car) {
   let distBonus = 0;
 
   if (car.checkpointsReached < checkpoints.length) { //Did not finish
-    distBonus = 500 - p5.Vector.dist(car.pos, checkpoints[checkpoints.length - 1].pos); //500 - dist from checkopint
+    let index = constrain(car.checkpointsReached, 0, checkpoints.length - 1);
+    let checkpoint = checkpoints[index];
+    distBonus = 500 - p5.Vector.dist(car.pos, checkpoint.pos); //500 - dist from checkopint
   } else { //Finished
     checkPointBonus *= 2; //2 Times bonus
   }
