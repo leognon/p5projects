@@ -4,7 +4,7 @@ function calcProb() {
     sumFit += snake.getFitness();
   }
   for (let snake of snakes) {
-    snake.prob = (snake.getFitness() / sumFit);
+    snake.prob = (snake.fitness / sumFit);
   }
 }
 
@@ -13,7 +13,7 @@ function doGeneticAlg() {
 
   calcProb(); //FITNESS!!!
 
-  for (let i = 0; i < populationSize; i++) {
+  for (let i = 0; i < populationSize - 5; i++) {
     //SELECTION!!!
     let parentAIndex = pickIndex(snakes); //Pick the index of the first parent based on prob
     let parentBIndex = pickIndex(snakes); //Pick the index of the second parent based on prob
@@ -41,10 +41,12 @@ function doGeneticAlg() {
 
     nextGen.push(new Snake(snakeStart.x, snakeStart.y, childBrain)); //Add the child car to the next generation
   }
+  for (let i = 0; i < 5; i++) {
+    nextGen.push(new Snake(snakeStart.x, snakeStart.y)); //Always add an extra 5 snakes with random genes
+  }
 
   snakes = nextGen; //The next Gen become the current Gen
   generation++;
-  console.log("1 GENERATION COMPLETE!");
 }
 
 function pickIndex(list) {

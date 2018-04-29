@@ -12,19 +12,24 @@ class Food {
 function randFoodPos(s) {
   let x;
   let y;
-  for (let i = 0; i < 3000; i++) {
+  let tries = 0;
+  let insideSnake = false;
+
+  do {
     x = floor(random(gridWidth));
     y = floor(random(gridHeight));
-    let insideSnake = false;
+
     if (x == s.pos.x && y == s.pos.y) {
       insideSnake = true;
     } else {
       for (let p of s.hist) {
-        if (x == p.x && y == p.y) {
+        if (x == s.pos.x && y == s.pos.y) {
           insideSnake = true;
         }
       }
     }
-  }
+    tries++;
+  } while (insideSnake && tries < 10000);
+
   return createVector(x, y);
 }

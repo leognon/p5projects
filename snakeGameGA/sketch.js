@@ -15,18 +15,18 @@ const DOWNRIGHT = 7;
 
 const WALLid = 0;
 const FOODid = 1;
-const TAILid = 2;
+const TAILid = 0;
 
 const gridSize = 30;
 const mutationRate = 0.005;
 const nnValues = {
-  inputs: 16,
-  hidden: 64,
+  inputs: 2,
+  hidden: 32,
   output: 4
 };
-const populationSize = 150;
+const populationSize = 450;
 
-let mustEatEvery = 150;
+let mustEatEvery = 60;
 let time = 0;
 let generation = 0;
 let speed = 1;
@@ -35,6 +35,7 @@ let snakeStart;
 let gridWidth;
 let gridHeight;
 
+let amtToShow = 600;
 let snakes = [];
 
 function setup() {
@@ -61,8 +62,11 @@ function setup() {
  */
 
 function draw() {
+  // noLoop();
+
   for (let i = 0; i < speed; i++) {
     background(0);
+    // drawGrid();
 
     if (deadSnakes < snakes.length) {
       for (let snake of snakes) {
@@ -75,6 +79,7 @@ function draw() {
     }
     time++;
   }
+  // convertInputToText(snakes[0].getInputs());
 }
 
 function mousePressed() { //If simulation gets stuck, pressed to end generation
