@@ -1,11 +1,13 @@
-let brain;
+const networkStats = {
+  inputs: 3,
+  hidden: 4,
+  outputs: 1
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  brain = new NeuralNetwork(2, 4, 1);
 }
 
 function draw() {
   background(0);
-
 }
