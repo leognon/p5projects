@@ -10,7 +10,7 @@ class Predictor {
   }
 
   getColor(r, g, b) {
-    let ans = this.brain.predict([r, g, b]);
+    let ans = this.brain.predict([r, g, b])[0];
     if (ans > .5) {
       return 255;
     } else {
@@ -18,8 +18,8 @@ class Predictor {
     }
   }
 
-  crossover(other) {
-    return new Predictor(this.brain.crossover(other.brain));
+  crossover(other, type) {
+    return new Predictor(this.brain.crossover(other.brain, type));
   }
 
   mutate(rate) {
@@ -30,6 +30,7 @@ class Predictor {
     let thisAnswer = this.getColor(r, g, b);
     if (thisAnswer == correctAnswer) {
       this.fitness = 15;
+      // console.log("Correct!" + thisAnswer);
     } else {
       this.fitness = 1;
     }

@@ -6,8 +6,8 @@ class GeneticAlgorithm {
     //Make ga variables here (population, mutation rate, etc)
   }
 
-  evolveNextGen() {
-    this.evaluateAllFitness(); //Evaluate fitness
+  evolveNextGen(inputs, correctAnswer) {
+    this.evaluateAllFitness(inputs, correctAnswer); //Evaluate fitness
     let newPop = []; //Create a new population
 
     for (let p of this.pop) {
@@ -24,7 +24,7 @@ class GeneticAlgorithm {
         }
       }
 
-      let child = this.pop[parentAIndex].crossover(this.pop[parentBIndex]); //Crossover
+      let child = this.pop[parentAIndex].crossover(this.pop[parentBIndex], 0); //Crossover
 
       child.mutate(this.mutRate); //Mutation
 
@@ -34,10 +34,10 @@ class GeneticAlgorithm {
     this.generation++;
   }
 
-  evaluateAllFitness() {
+  evaluateAllFitness(inp, correctAnswer) {
     let totalFitness = 0;
     for (let p of this.pop) {
-      totalFitness += p.getFitness();
+      totalFitness += p.getFitness(inp[0], inp[1], inp[2], correctAnswer);
     }
     for (let p of this.pop) {
       p.prob = p.fitness / totalFitness;
