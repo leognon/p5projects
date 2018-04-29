@@ -19,11 +19,11 @@ class Predictor {
   }
 
   crossover(other) {
-
+    return new Predictor(this.brain.crossover(other.brain));
   }
 
   mutate(rate) {
-
+    this.brain.mutate(rate, x => Math.random() * 2 - 1);
   }
 
   getFitness(r, g, b, correctAnswer) { //TODO MAKE THE FITNESS FUNCITON BETTER!

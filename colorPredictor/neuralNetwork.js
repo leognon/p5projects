@@ -34,6 +34,64 @@ class NeuralNetwork {
     outputs = outputs.map(x => activate(x)); //Activate each output
     return outputs;
   }
+
+  crossover(other, type) { //The crossover function, type is what type of crossover to perform
+    let childNN = new NeuralNetwork(networkStats.inputs, networkStats.hidden, networkStats.outputs); //Create the child
+
+    //Make each array of the child a combination of the parents
+    for (let i = 0; i < networkStats.inputs.length; i++) {
+      childNN.inputHidden[i] = crossoverArray(this.inputHidden[i], other.inputHidden[i], type);
+    }
+    for (let j = 0; j < networkStats.hidden.length; j++) {
+      childNN.hiddenOutput[i] = crossoverArray(this.hiddenOutput[i], other.hiddenOutput[i], type);
+    }
+    childNN.hiddenBiases = crossoverArray(this.hiddenBiases, other.hiddenBiases, type);
+    childNN.outputBiases = crossoverArray(this.outputBiases, other.outputBiases, type);
+    return childNN;
+  }
+
+  mutate(rate, randomizer) { //Mutate each gene with a percent chance and mutate it using a certain function
+    for (let i = 0; i < this.inputHidden.length; i++) { //TODO Make these more efficient by only doing one loop
+      for (let j = 0; j < this.inputHidden[i].length; j++) {
+        if (Math.random() < rate) this.inputHidden[i][j] = randomizer(this.inputHidden[i][j]);
+      }
+    }
+    for (let i = 0; i < this.hiddenOutput.length; i++) {
+      for (let j = 0; j < this.hiddenOutput[i].length; j++) {
+        if (Math.random() < rate) this.hiddenOutput[i][j] = randomizer(this.hiddenOutput[i][j]);
+      }
+    }
+    for (let i = 0; i < this.hiddenBiases; i++) {
+      if (Math.random() < rate) this.hiddenBiases[i] = randomizer(this.hiddenBiases[i]);
+    }
+    for (let i = 0; i < this.outputBiases; i++) {
+      if (Math.random() < rate) this.outputBiases[i] = randomizer(this.outputBiases[i]);
+    }
+  }
+}
+
+function crossoverArray(arrA, arrB, type) {
+  if (arrA.length != arrB.length) {
+    console.log("Attempte to crossover arrays of different length!");
+    return;
+  }
+
+  let childArray = []
+  switch (type) {
+    case 0: //Each index has a 50/50 chance of being from either array
+      for (let i = 0; i < arrA.length; i++) {
+        if (random(1) < 0.5) {
+          childArray[i] = arrA[i];
+        } else {
+          childArray[i] = arrB[i];
+        }
+      }
+      break;
+    case 1: //Takes first 50% from arrA, second 50% from arrB
+      childArray = arrA.slice(0, arrA.length / 2).concat(arrB.slice(arrB.length / 2, arrB.length));
+      break;
+  }
+  return childArray;
 }
 
 function activate(n) { //The activation function
