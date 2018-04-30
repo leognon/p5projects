@@ -24,7 +24,7 @@ class GeneticAlgorithm {
         }
       }
 
-      let child = this.pop[parentAIndex].crossover(this.pop[parentBIndex], 0); //Crossover
+      let child = this.pop[parentAIndex].crossover(this.pop[parentBIndex], 1); //Crossover
 
       child.mutate(this.mutRate); //Mutation
 

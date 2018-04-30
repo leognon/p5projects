@@ -10,8 +10,8 @@ class Predictor {
   }
 
   getColor(r, g, b) {
-    let ans = this.brain.predict([r, g, b])[0];
-    if (ans > .5) {
+    let ans = this.brain.predict([r, g, b]);
+    if (ans[0] > ans[1]) {
       return 255;
     } else {
       return 0;
@@ -27,13 +27,15 @@ class Predictor {
   }
 
   getFitness(r, g, b, correctAnswer) { //TODO MAKE THE FITNESS FUNCITON BETTER!
-    let thisAnswer = this.getColor(r, g, b);
-    if (thisAnswer == correctAnswer) {
-      this.fitness = 15;
-      // console.log("Correct!" + thisAnswer);
-    } else {
-      this.fitness = 1;
+    this.correct = 0;
+    for (let descision of previousDesicions) {
+      let thisAnswer = this.getColor(descision.r, descision.g, descision.b);
+      if (thisAnswer == descision.correct) {
+        this.correct++;
+      }
     }
+    this.fitness = 100 * (this.correct / previousDesicions.length);
+    console.log(this.fitness); //TODO Make sure the algorithm is working
     return this.fitness;
   }
 }
