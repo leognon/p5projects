@@ -19,6 +19,8 @@ class GeneticAlgorithm {
         parentBIndex = pickIndex(this.pop);
         attempt++;
         if (attempt > 500) {
+          console.log(this.pop);
+          console.log(parentAIndex + "   " + parentBIndex);
           console.log("HAD TO USE DUPLICATE PARENT!!");
           return;
         }

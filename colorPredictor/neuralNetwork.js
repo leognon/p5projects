@@ -23,7 +23,7 @@ class NeuralNetwork {
         hiddenValues[j] += (inputs[i] * this.inputHidden[i][j]);
       }
     }
-    hiddenValues = hiddenValues.map(x => activate(x)); //Activate each hidden node
+    hiddenValues = hiddenValues.map(x => activateReLu(x)); //Activate each hidden node
 
     let outputs = this.outputBiases.slice(0); //The final outputs, starting out with the biases
     for (let j = 0; j < outputs.length; j++) { //Compute each hidden node
@@ -31,7 +31,11 @@ class NeuralNetwork {
         outputs[j] += (hiddenValues[i] * this.hiddenOutput[i][j]);
       }
     }
-    outputs = outputs.map(x => activate(x)); //Activate each output
+    let totalOutput = 0;
+    for (let val of outputs) {
+      totalOutput += val; //The total of all outputs, to be used for softmax
+    }
+    outputs = outputs.map(x => activateSoftmax(x, totalOutput)); //Activate each output
     return outputs;
   }
 
@@ -94,8 +98,12 @@ function crossoverArray(arrA, arrB, type) {
   return childArray;
 }
 
-function activate(n) { //The activation function
-  return max(0, n); //ReLu activation funciton
+function activateReLu(n) { //The ReLu activation function
+  return max(0, n);
+}
+
+function activateSoftmax(n, total) {
+  return n / total;
 }
 
 function create2dArray(rows, cols) {

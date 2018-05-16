@@ -18,8 +18,33 @@ function setup() {
   ga = new GeneticAlgorithm(population, 0.005);
   randomizeColor();
 }
+let count = 0;
+let totalTrain = 3; //TODO Make sure it is working! See what jabrils used for his fitness func
 
 function draw() {
+  while (count < totalTrain) { //Train the population very quickly at the start of the program
+    let choice = 255;
+    if ((r + g + b) / 3 > 127) { //If bright enough then the better color is black
+      choice = 0;
+    }
+    let correctOutput = [];
+    if (choice === 0) {
+      correctOutput = [1, 0];
+    } else {
+      correctOutput = [0, 1];
+    }
+
+    previousDesicions.push({
+      r: r,
+      g: g,
+      b: b,
+      correct: correctOutput
+    });
+
+    ga.evolveNextGen([r, g, b], correctOutput);
+    randomizeColor();
+    count++;
+  }
   background(r, g, b);
   fill(255);
   textSize(25);
@@ -56,21 +81,29 @@ function draw() {
 //TODO Also saving and loading neural networks
 
 function mousePressed() {
-  let choice;
+  let choice; //The correct output
   if (mouseX < width / 2) {
     choice = 255;
   } else {
     choice = 0;
   }
 
+  let correctOutput = [];
+  if (choice === 0) {
+    correctOutput = [1, 0];
+  } else {
+    correctOutput = [0, 1];
+  }
+
   previousDesicions.push({
     r: r,
     g: g,
     b: b,
-    correct: choice
+    correct: correctOutput
   });
 
-  ga.evolveNextGen([r, g, b], choice);
+
+  ga.evolveNextGen([r, g, b], correctOutput);
   randomizeColor();
 }
 
