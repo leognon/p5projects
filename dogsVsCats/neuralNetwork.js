@@ -85,7 +85,7 @@ function crossoverArray(arrA, arrB, type) {
     case 0: //Each index has a 50/50 chance of being from either array
       for (let i = 0; i < arrA.length; i++) {
         if (random(1) < 0.5) {
-          childArray[i] = arrA[i];
+          childArray[i] = arrA[i]; //Instead of this, make it combine the arrays, shuffle them, then only take the first half 
         } else {
           childArray[i] = arrB[i];
         }

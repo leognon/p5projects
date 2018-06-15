@@ -39,10 +39,10 @@ class GeneticAlgorithm {
   evaluateAllFitness(inp, correctAnswer) {
     let totalFitness = 0;
     for (let p of this.pop) {
-      totalFitness += p.getFitness(inp[0], inp[1], inp[2], correctAnswer);
+      totalFitness += p.getFitness(inp, correctAnswer);
     }
-    for (let p of this.pop) {
-      p.prob = p.fitness / totalFitness;
+    for (let i = 0; i < this.pop.length; i++) {
+      this.pop[i].prob = this.pop[i].fitness / totalFitness;
     }
   }
 
@@ -50,13 +50,25 @@ class GeneticAlgorithm {
     this.mutRate = n;
   }
 }
+let errorOcc = false;
 
 function pickIndex(list) {
+  if (errorOcc) return;
   var index = -1;
   var r = random(1);
   while (r > 0) {
+    if (errorOcc) return;
     index++;
-    r -= list[index].prob;
+    try {
+      r -= list[index].prob;
+    } catch (error) {
+      console.error(error);
+      console.log("AN ERROR OCCURED!!!!!");
+      console.log("index: " + index);
+      console.log(list);
+      errorOcc = true;
+      noLoop();
+    }
   }
   return index;
 }
