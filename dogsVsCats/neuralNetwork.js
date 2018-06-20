@@ -65,10 +65,10 @@ class NeuralNetwork {
         if (Math.random() < rate) this.hiddenOutput[i][j] = randomizer(this.hiddenOutput[i][j]);
       }
     }
-    for (let i = 0; i < this.hiddenBiases; i++) {
+    for (let i = 0; i < this.hiddenBiases.length; i++) {
       if (Math.random() < rate) this.hiddenBiases[i] = randomizer(this.hiddenBiases[i]);
     }
-    for (let i = 0; i < this.outputBiases; i++) {
+    for (let i = 0; i < this.outputBiases.length; i++) {
       if (Math.random() < rate) this.outputBiases[i] = randomizer(this.outputBiases[i]);
     }
   }
