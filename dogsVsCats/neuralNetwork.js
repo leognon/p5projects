@@ -47,7 +47,7 @@ class NeuralNetwork {
       childNN.inputHidden[i] = crossoverArray(this.inputHidden[i], other.inputHidden[i], type);
     }
     for (let j = 0; j < networkStats.hidden; j++) {
-      childNN.hiddenOutput[i] = crossoverArray(this.hiddenOutput[i], other.hiddenOutput[i], type);
+      childNN.hiddenOutput[i] = crossoverArray(this.hiddenOutput[j], other.hiddenOutput[j], type);
     }
     childNN.hiddenBiases = crossoverArray(this.hiddenBiases, other.hiddenBiases, type);
     childNN.outputBiases = crossoverArray(this.outputBiases, other.outputBiases, type);
