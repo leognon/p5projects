@@ -43,11 +43,11 @@ class NeuralNetwork {
     let childNN = new NeuralNetwork(networkStats.inputs, networkStats.hidden, networkStats.outputs); //Create the child
 
     //Make each array of the child a combination of the parents
-    for (let i = 0; i < networkStats.inputs.length; i++) {
+    for (let i = 0; i < networkStats.inputs; i++) {
       childNN.inputHidden[i] = crossoverArray(this.inputHidden[i], other.inputHidden[i], type);
     }
-    for (let j = 0; j < networkStats.hidden.length; j++) {
-      childNN.hiddenOutput[i] = crossoverArray(this.hiddenOutput[i], other.hiddenOutput[i], type);
+    for (let j = 0; j < networkStats.hidden; j++) {
+      childNN.hiddenOutput[j] = crossoverArray(this.hiddenOutput[j], other.hiddenOutput[j], type);
     }
     childNN.hiddenBiases = crossoverArray(this.hiddenBiases, other.hiddenBiases, type);
     childNN.outputBiases = crossoverArray(this.outputBiases, other.outputBiases, type);
@@ -65,10 +65,10 @@ class NeuralNetwork {
         if (Math.random() < rate) this.hiddenOutput[i][j] = randomizer(this.hiddenOutput[i][j]);
       }
     }
-    for (let i = 0; i < this.hiddenBiases; i++) {
+    for (let i = 0; i < this.hiddenBiases.length; i++) {
       if (Math.random() < rate) this.hiddenBiases[i] = randomizer(this.hiddenBiases[i]);
     }
-    for (let i = 0; i < this.outputBiases; i++) {
+    for (let i = 0; i < this.outputBiases.length; i++) {
       if (Math.random() < rate) this.outputBiases[i] = randomizer(this.outputBiases[i]);
     }
   }
