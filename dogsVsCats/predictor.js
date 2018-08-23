@@ -26,7 +26,6 @@ class Predictor {
     this.brain.mutate(rate, x => Math.random() * 2 - 1);
   }
 
-
   getFitness(inputs, correctOutput) {
     // let fitness = 0;
     // for (let descision of previousDesicions) {
