@@ -12,8 +12,8 @@ const networkStats = {
 }
 
 //MAKE IT MULTI LAYER BY ADDING A FEEDFORWARD FUNCTION, WHICH TAKES IN SOME ARRAYS (START LAYER, WEIGHT MATRIX, AMT OF OUTPUTS), AND IT RETURNS AN ARRAY OF OUT PUTS. USE THIS TO MAKE IT AS MANY LAYERS AS YOU WANT!!!
-const amtOfTrainData = 10;
-const amtOfTestData = 10;
+const amtOfTrainData = 100;
+const amtOfTestData = 90;
 // let previousDesicions = [];
 let ga;
 const populationSize = 50;
@@ -25,8 +25,6 @@ let testData = [];
 
 let accuracy = 0;
 
-let scl = 20;
-
 function preload() {
   //--------------------------------LOAD ALL TRAINING IMAGES--------------------------------
   trainData = loadImgsToArr(amtOfTrainData, "data/train/");
@@ -36,6 +34,9 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  trainData = shuffle(trainData);
+  testData = shuffle(testData);
+
   let population = [];
   for (let i = 0; i < populationSize; i++) {
     population.push(new Predictor());
@@ -50,7 +51,11 @@ function loadImgsToArr(amt, path) {
   let catIndex = 0;
   let dogIndex = 0;
   for (let i = 0; i < amt; i++) {
-    let classify = (random(1) < 0.5) ? dog : cat;
+    // let classify = (random(1) < 0.5) ? dog : cat;
+    let classify = dog;
+    if (i < amt / 2) {
+      classify = cat;
+    }
     let tag;
     let index;
     if (classify == dog) {
@@ -71,9 +76,26 @@ function loadImgsToArr(amt, path) {
       }
       let croppedImg = theImg.get((theImg.width / 2) - halfNewW, (theImg.height / 2) - halfNewH, newW, newH);
       arr.push(new Img(croppedImg, prettyImg, classify));
+      // console.log(arr);
     });
   }
+  // console.log(amt + "  " + arr);
   return arr;
+}
+
+function shuffle(array) { //From https://bost.ocks.org/mike/shuffle/
+  var m = array.length,
+    t, i;
+  // While there remain elements to shuffle…
+  while (m) {
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * m--);
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+  return array;
 }
 
 function draw() {
