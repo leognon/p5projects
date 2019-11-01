@@ -35,6 +35,7 @@ function draw() {
     });
   }
   noFill();
+  showDrawing();
   beginShape();
   for (point of currentStroke) {
     stroke(colors[point.i]);
@@ -42,7 +43,6 @@ function draw() {
     vertex(point.x, point.y);
   }
   endShape();
-  showDrawing();
 
   fill(200);
   noStroke();
